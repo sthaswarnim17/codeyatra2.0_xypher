@@ -2,8 +2,8 @@ import { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext(null);
 
-const USER_KEY = "sikshyamap_user";
-const TOKEN_KEY = "sikshyamap_token";
+const USER_KEY = "aarvana_user";
+const TOKEN_KEY = "aarvana_token";
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
@@ -52,19 +52,21 @@ export function AuthProvider({ children }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, email, password }),
     });
-    const data = await res.json();
+    const json = await res.json();
     if (!res.ok)
-      return { ok: false, error: data.message ?? "Registration failed." };
+      return { ok: false, error: json.error?.message ?? "Registration failed." };
 
+    const payload = json.data ?? {};
+    const student = payload.student ?? {};
     const newUser = {
-      id: data.user?.id ?? crypto.randomUUID(),
-      name: data.user?.name ?? name,
+      id: student.id ?? crypto.randomUUID(),
+      name: student.name ?? name,
       email,
       onboardingDone: false,
       class: null,
       subject: null,
     };
-    setToken(data.access_token ?? null);
+    setToken(payload.access_token ?? null);
     setUser(newUser);
     return { ok: true, user: newUser };
   }
@@ -76,18 +78,20 @@ export function AuthProvider({ children }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
-    const data = await res.json();
-    if (!res.ok) return { ok: false, error: data.message ?? "Login failed." };
+    const json = await res.json();
+    if (!res.ok) return { ok: false, error: json.error?.message ?? "Login failed." };
 
+    const payload = json.data ?? {};
+    const student = payload.student ?? {};
     const loggedIn = {
-      id: data.user?.id ?? "",
-      name: data.user?.name ?? email,
+      id: student.id ?? "",
+      name: student.name ?? email,
       email,
-      onboardingDone: data.user?.onboardingDone ?? false,
-      class: data.user?.class ?? null,
-      subject: data.user?.subject ?? null,
+      onboardingDone: student.onboardingDone ?? false,
+      class: student.class ?? null,
+      subject: student.subject ?? null,
     };
-    setToken(data.access_token ?? null);
+    setToken(payload.access_token ?? null);
     setUser(loggedIn);
     return { ok: true, user: loggedIn };
   }
