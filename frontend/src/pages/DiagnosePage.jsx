@@ -144,8 +144,8 @@ export default function DiagnosePage() {
     };
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <div className="w-8 h-8 rounded-full border-2 border-indigo-500 border-t-transparent animate-spin" />
-        <p className="text-slate-400 text-sm">{msgs[screen]}</p>
+        <div className="w-8 h-8 rounded-full border-2 border-amber-brand border-t-transparent animate-spin" />
+        <p className="text-text-secondary text-sm">{msgs[screen]}</p>
       </div>
     );
   }
@@ -154,14 +154,14 @@ export default function DiagnosePage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 px-6 text-center">
         <div className="text-4xl">⚠️</div>
-        <p className="text-red-400 font-medium">{errMsg}</p>
-        <p className="text-slate-500 text-sm">
+        <p className="text-red-500 font-medium">{errMsg}</p>
+        <p className="text-text-muted text-sm">
           Make sure the Flask backend is running on{" "}
-          <code className="text-indigo-400">localhost:5000</code>
+          <code className="text-amber-brand">localhost:5000</code>
         </p>
         <button
           onClick={restart}
-          className="mt-2 rounded-xl border border-slate-700 hover:border-slate-500 px-6 py-2 text-sm font-medium text-slate-300 transition-all"
+          className="mt-2 rounded-xl border border-gray-300 hover:border-gray-400 px-6 py-2 text-sm font-medium text-text-secondary transition-all"
         >
           Try Again
         </button>
@@ -174,7 +174,7 @@ export default function DiagnosePage() {
     return (
       <main className="max-w-3xl mx-auto px-6 py-12">
         <h2 className="text-2xl font-bold mb-1">Choose a Concept</h2>
-        <p className="text-slate-400 text-sm mb-8">
+        <p className="text-text-secondary text-sm mb-8">
           Pick the concept you&apos;re stuck on. We&apos;ll run 3 diagnostic
           questions to find your exact gap.
         </p>
@@ -183,13 +183,13 @@ export default function DiagnosePage() {
             <button
               key={c.id}
               onClick={() => handlePickConcept(c)}
-              className="group rounded-xl border border-slate-800 bg-slate-900 hover:border-indigo-600/60 hover:bg-slate-800/60 p-5 text-left transition-all"
+              className="group rounded-xl border border-gray-200 bg-white hover:border-amber-brand hover:bg-gray-50 p-5 text-left transition-all"
             >
-              <div className="font-semibold text-white mb-1 group-hover:text-indigo-300 transition-colors">
+              <div className="font-semibold text-text-primary mb-1 group-hover:text-amber-brand transition-colors">
                 {c.name}
               </div>
               {c.description && (
-                <div className="text-slate-400 text-xs line-clamp-2">
+                <div className="text-text-secondary text-xs line-clamp-2">
                   {c.description}
                 </div>
               )}
@@ -198,7 +198,7 @@ export default function DiagnosePage() {
                   {c.prerequisites.map((p) => (
                     <span
                       key={p}
-                      className="text-[10px] bg-indigo-950/60 text-indigo-400 border border-indigo-800/40 rounded px-1.5 py-0.5"
+                      className="text-[10px] bg-amber-brand/10 text-amber-brand border border-amber-200 rounded px-1.5 py-0.5"
                     >
                       {PREREQ_LABELS[p] ?? p}
                     </span>
@@ -223,10 +223,10 @@ export default function DiagnosePage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <p className="text-xs text-slate-500 uppercase tracking-widest mb-1">
+            <p className="text-xs text-text-muted uppercase tracking-widest mb-1">
               {concept?.name}
             </p>
-            <h2 className="text-lg font-bold text-white">
+            <h2 className="text-lg font-bold text-text-primary">
               Checkpoint {step + 1} of {questions.length}
             </h2>
           </div>
@@ -237,10 +237,10 @@ export default function DiagnosePage() {
                 key={i}
                 className={`h-1.5 w-8 rounded-full transition-all ${
                   i < step
-                    ? "bg-indigo-500"
+                    ? "bg-amber-brand"
                     : i === step
-                      ? "bg-indigo-400"
-                      : "bg-slate-700"
+                      ? "bg-amber-brand/60"
+                      : "bg-gray-200"
                 }`}
               />
             ))}
@@ -248,8 +248,8 @@ export default function DiagnosePage() {
         </div>
 
         {/* Question card */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-7 mb-6">
-          <p className="text-white text-base leading-relaxed mb-6">{q?.text}</p>
+        <div className="rounded-2xl border border-gray-200 bg-white p-7 mb-6">
+          <p className="text-text-primary text-base leading-relaxed mb-6">{q?.text}</p>
 
           <div className="flex flex-col gap-3">
             {q?.choices?.map((ch) => (
@@ -258,12 +258,12 @@ export default function DiagnosePage() {
                 onClick={() => handleChoose(ch.id)}
                 className={`rounded-xl border-2 px-5 py-3.5 text-sm text-left transition-all ${
                   chosen === ch.id
-                    ? "border-indigo-500 bg-indigo-950/60 text-white"
-                    : "border-slate-700 bg-slate-800/60 text-slate-300 hover:border-slate-500 hover:text-white"
+                    ? "border-amber-brand bg-amber-brand/10 text-text-primary"
+                    : "border-gray-300 bg-gray-50 text-text-secondary hover:border-gray-400 hover:text-text-primary"
                 }`}
               >
                 <span
-                  className={`font-mono mr-3 text-xs ${chosen === ch.id ? "text-indigo-400" : "text-slate-500"}`}
+                  className={`font-mono mr-3 text-xs ${chosen === ch.id ? "text-amber-brand" : "text-text-muted"}`}
                 >
                   {ch.id.toUpperCase()}.
                 </span>
@@ -277,7 +277,7 @@ export default function DiagnosePage() {
           {step > 0 ? (
             <button
               onClick={() => setStep((s) => s - 1)}
-              className="rounded-xl border border-slate-700 hover:border-slate-500 px-6 py-2.5 text-sm font-medium text-slate-300 transition-all"
+              className="rounded-xl border border-gray-300 hover:border-gray-400 px-6 py-2.5 text-sm font-medium text-text-secondary transition-all"
             >
               ← Back
             </button>
@@ -287,7 +287,7 @@ export default function DiagnosePage() {
           <button
             disabled={!chosen}
             onClick={handleNext}
-            className="rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 px-8 py-2.5 text-sm font-semibold text-white transition-all"
+            className="rounded-xl bg-amber-brand hover:bg-amber-hover disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 px-8 py-2.5 text-sm font-semibold text-text-primary transition-all"
           >
             {isLast ? "Submit →" : "Next →"}
           </button>
@@ -308,15 +308,15 @@ export default function DiagnosePage() {
         <div
           className={`rounded-2xl border p-7 mb-6 text-center ${
             passed
-              ? "border-emerald-700/50 bg-emerald-950/30"
-              : "border-amber-700/50 bg-amber-950/20"
+              ? "border-emerald-700/50 bg-emerald-50"
+              : "border-amber-200 bg-amber-50"
           }`}
         >
           <div className="text-5xl mb-3">{passed ? "🎉" : "🔍"}</div>
-          <h2 className="text-2xl font-extrabold mb-2 text-white">
+          <h2 className="text-2xl font-extrabold mb-2 text-text-primary">
             {passed ? "Great job!" : "Gap detected"}
           </h2>
-          <p className="text-slate-400 text-sm max-w-sm mx-auto">
+          <p className="text-text-secondary text-sm max-w-sm mx-auto">
             {passed
               ? `You have a solid grasp of ${concept?.name}. Keep going!`
               : `You need to review some prerequisites before mastering ${concept?.name}.`}
@@ -325,8 +325,8 @@ export default function DiagnosePage() {
 
         {/* Checkpoint breakdown */}
         {checkpoints.length > 0 && (
-          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 mb-6">
-            <h3 className="font-semibold text-sm text-slate-400 uppercase tracking-widest mb-4">
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 mb-6">
+            <h3 className="font-semibold text-sm text-text-secondary uppercase tracking-widest mb-4">
               Checkpoint Results
             </h3>
             <div className="flex flex-col gap-3">
@@ -338,17 +338,17 @@ export default function DiagnosePage() {
                   <div
                     className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
                       r.correct
-                        ? "bg-emerald-900 text-emerald-400"
-                        : "bg-red-900 text-red-400"
+                        ? "bg-emerald-100 text-emerald-600"
+                        : "bg-red-900 text-red-500"
                     }`}
                   >
                     {r.correct ? "✓" : "✗"}
                   </div>
-                  <span className="text-sm text-slate-300">
+                  <span className="text-sm text-text-secondary">
                     Checkpoint {i + 1}
                   </span>
                   {!r.correct && r.mapped_prereq && (
-                    <span className="ml-auto text-[11px] bg-amber-950/50 text-amber-400 border border-amber-800/40 rounded px-2 py-0.5">
+                    <span className="ml-auto text-[11px] bg-amber-50 text-amber-brand border border-amber-200 rounded px-2 py-0.5">
                       Review:{" "}
                       {PREREQ_LABELS[r.mapped_prereq] ?? r.mapped_prereq}
                     </span>
@@ -361,18 +361,18 @@ export default function DiagnosePage() {
 
         {/* Bridge — prerequisite nodes */}
         {prereqs.length > 0 && (
-          <div className="rounded-2xl border border-indigo-800/40 bg-indigo-950/20 p-6 mb-6">
-            <h3 className="font-semibold text-sm text-indigo-400 uppercase tracking-widest mb-3">
+          <div className="rounded-2xl border border-amber-200 bg-amber-brand/10/20 p-6 mb-6">
+            <h3 className="font-semibold text-sm text-amber-brand uppercase tracking-widest mb-3">
               🗺️ Prerequisite Bridge
             </h3>
-            <p className="text-slate-400 text-xs mb-4">
+            <p className="text-text-secondary text-xs mb-4">
               Study these topics first, then re-attempt the diagnostic.
             </p>
             <div className="flex flex-wrap gap-2">
               {prereqs.map((p) => (
                 <span
                   key={p}
-                  className="rounded-lg border border-indigo-700/50 bg-indigo-900/30 text-indigo-300 text-sm px-3 py-1.5 font-medium"
+                  className="rounded-lg border border-amber-brand/30 bg-amber-brand/10 text-amber-brand text-sm px-3 py-1.5 font-medium"
                 >
                   {PREREQ_LABELS[p] ?? p}
                 </span>
@@ -383,8 +383,8 @@ export default function DiagnosePage() {
 
         {/* Resources */}
         {resources.length > 0 && (
-          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 mb-6">
-            <h3 className="font-semibold text-sm text-slate-400 uppercase tracking-widest mb-4">
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 mb-6">
+            <h3 className="font-semibold text-sm text-text-secondary uppercase tracking-widest mb-4">
               📹 Curated Resources
             </h3>
             <div className="flex flex-col gap-3">
@@ -394,20 +394,20 @@ export default function DiagnosePage() {
                   href={r.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-start gap-3 rounded-xl border border-slate-700 hover:border-indigo-600/60 bg-slate-800/60 hover:bg-slate-800 p-4 transition-all"
+                  className="flex items-start gap-3 rounded-xl border border-gray-300 hover:border-amber-brand bg-gray-50 hover:bg-gray-100 p-4 transition-all"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-red-900/40 border border-red-800/30 flex items-center justify-center flex-shrink-0 text-sm">
+                  <div className="w-8 h-8 rounded-lg bg-red-50 border border-red-200/30 flex items-center justify-center flex-shrink-0 text-sm">
                     ▶
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-white">{r.title}</p>
+                    <p className="text-sm font-medium text-text-primary">{r.title}</p>
                     {r.timestamp && (
-                      <p className="text-xs text-slate-500 mt-0.5">
+                      <p className="text-xs text-text-muted mt-0.5">
                         Start at {r.timestamp}
                       </p>
                     )}
                     {r.description && (
-                      <p className="text-xs text-slate-400 mt-1 line-clamp-1">
+                      <p className="text-xs text-text-secondary mt-1 line-clamp-1">
                         {r.description}
                       </p>
                     )}
@@ -422,13 +422,13 @@ export default function DiagnosePage() {
         <div className="flex gap-3">
           <button
             onClick={restart}
-            className="flex-1 rounded-xl border border-slate-700 hover:border-slate-500 py-3 text-sm font-semibold text-slate-300 hover:text-white transition-all"
+            className="flex-1 rounded-xl border border-gray-300 hover:border-gray-400 py-3 text-sm font-semibold text-text-secondary hover:text-text-primary transition-all"
           >
             ← Try Another Concept
           </button>
           <button
             onClick={() => handlePickConcept(concept)}
-            className="flex-1 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 py-3 text-sm font-semibold text-white transition-all"
+            className="flex-1 rounded-xl bg-amber-brand hover:bg-amber-hover active:scale-95 py-3 text-sm font-semibold text-text-primary transition-all"
           >
             Retry This Concept ↺
           </button>
