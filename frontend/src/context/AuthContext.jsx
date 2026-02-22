@@ -2,57 +2,94 @@ import { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext(null);
 
-const STORAGE_KEY = "sikshyamap_user";
+const USER_KEY = "sikshyamap_user";
+const TOKEN_KEY = "sikshyamap_token";
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem(USER_KEY);
       return raw ? JSON.parse(raw) : null;
     } catch {
       return null;
     }
   });
 
-  // Persist every change to localStorage
+  const [token, setToken] = useState(
+    () => localStorage.getItem(TOKEN_KEY) ?? null,
+  );
+
   useEffect(() => {
-    if (user) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-    } else {
-      localStorage.removeItem(STORAGE_KEY);
-    }
+    if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
+    else localStorage.removeItem(USER_KEY);
   }, [user]);
 
-  /** Called after signup form submit */
-  function signup({ name, email, password }) {
-    // In production: POST /api/auth/signup → get JWT
-    // For now: store locally, mark onboarding incomplete
-    const newUser = {
-      id: crypto.randomUUID(),
-      name,
-      email,
-      password, // NOTE: never do this in production — backend handles hashing
-      onboardingDone: false,
-      class: null, // "11" or "12"
-      subject: null, // "physics"
-    };
-    setUser(newUser);
-    return newUser;
+  useEffect(() => {
+    if (token) localStorage.setItem(TOKEN_KEY, token);
+    else localStorage.removeItem(TOKEN_KEY);
+  }, [token]);
+
+  // ── helpers ──────────────────────────────────────────────────────────────
+
+  /** Fetch wrapper that attaches Authorization header automatically */
+  function authFetch(url, options = {}) {
+    return fetch(url, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(options.headers ?? {}),
+      },
+    });
   }
 
-  /** Called after login form submit */
-  function login({ email, password }) {
-    // In production: POST /api/auth/login → get JWT
-    // For now: check localStorage match
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (!stored)
-      return { ok: false, error: "No account found. Please sign up." };
-    const parsed = JSON.parse(stored);
-    if (parsed.email !== email || parsed.password !== password) {
-      return { ok: false, error: "Incorrect email or password." };
-    }
-    setUser(parsed);
-    return { ok: true, user: parsed };
+  // ── auth actions ─────────────────────────────────────────────────────────
+
+  /** POST /api/auth/register */
+  async function signup({ name, email, password }) {
+    const res = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+    const data = await res.json();
+    if (!res.ok)
+      return { ok: false, error: data.message ?? "Registration failed." };
+
+    const newUser = {
+      id: data.user?.id ?? crypto.randomUUID(),
+      name: data.user?.name ?? name,
+      email,
+      onboardingDone: false,
+      class: null,
+      subject: null,
+    };
+    setToken(data.access_token ?? null);
+    setUser(newUser);
+    return { ok: true, user: newUser };
+  }
+
+  /** POST /api/auth/login */
+  async function login({ email, password }) {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) return { ok: false, error: data.message ?? "Login failed." };
+
+    const loggedIn = {
+      id: data.user?.id ?? "",
+      name: data.user?.name ?? email,
+      email,
+      onboardingDone: data.user?.onboardingDone ?? false,
+      class: data.user?.class ?? null,
+      subject: data.user?.subject ?? null,
+    };
+    setToken(data.access_token ?? null);
+    setUser(loggedIn);
+    return { ok: true, user: loggedIn };
   }
 
   /** Called after onboarding form submit */
@@ -72,11 +109,21 @@ export function AuthProvider({ children }) {
 
   function logout() {
     setUser(null);
+    setToken(null);
   }
 
   return (
     <AuthContext.Provider
-      value={{ user, signup, login, logout, completeOnboarding, updateProfile }}
+      value={{
+        user,
+        token,
+        authFetch,
+        signup,
+        login,
+        logout,
+        completeOnboarding,
+        updateProfile,
+      }}
     >
       {children}
     </AuthContext.Provider>
