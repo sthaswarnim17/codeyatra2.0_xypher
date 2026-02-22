@@ -42,6 +42,7 @@ export default function Navbar() {
       <div className="flex items-center gap-6">
         {navLink("/", "Home")}
         {navLink("/questions", "Problems")}
+        {navLink("/diagnose", "Diagnose")}
 
         {user ? (
           <div className="flex items-center gap-3">
