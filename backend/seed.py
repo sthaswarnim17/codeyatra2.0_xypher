@@ -5,7 +5,8 @@ Reads:
   concepts.json                    → Concept + ConceptPrerequisite
   resources.json                   → Resource
   problem system/
-    sikshya_problems_dataset.json  → Problem + Step + StepOption (30 problems)
+    sikshya_problems_dataset.json  → Problem + Step + StepOption (existing problems)
+    hifi_problems.json             → High-fidelity problems with misconceptions
 
 Usage:
   python seed.py           (from backend/ directory)
@@ -15,6 +16,10 @@ import json
 import os
 import re
 import sys
+
+# Force UTF-8 output so Unicode print statements work on Windows consoles
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
 
 # Ensure the backend package is importable
 sys.path.insert(0, os.path.dirname(__file__))
@@ -37,6 +42,8 @@ from app.models.simulation import Simulation
 # --------------------------------------------------------------------
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "Xtra")
 NEW_PROBLEMS_FILE = os.path.join(DATA_DIR, "problem system", "sikshya_problems_dataset.json")
+
+HIFI_PROBLEMS_FILE = os.path.join(DATA_DIR, "problem system", "hifi_problems.json")
 
 CONCEPT_FILE = os.path.join(DATA_DIR, "concepts.json")
 RESOURCE_FILE = os.path.join(DATA_DIR, "resources.json")
@@ -254,6 +261,9 @@ def seed_new_problems():
         if len(title) > 255:
             title = title[:252] + "..."
 
+        key_objectives = prob_data.get("keyLearningObjectives", [])
+        misconceptions = prob_data.get("commonMisconceptions", [])
+
         problem = Problem(
             ext_id=ext_id,
             concept_id=concept_id,
@@ -266,6 +276,8 @@ def seed_new_problems():
             problem_type=problem_type,
             neb_alignment=neb_alignment,
             problem_statement=problem_statement,
+            key_learning_objectives=key_objectives,
+            common_misconceptions=misconceptions,
         )
         db.session.add(problem)
         db.session.flush()
@@ -390,6 +402,113 @@ def _infer_error_type(diagnosis: str, missing_slug: str) -> str:
     if missing_slug == "calculus_basics":
         return "CALCULUS_ERROR"
     return "UNKNOWN_ERROR"
+
+
+# ===================================================================
+# 3b. Seed High-Fidelity Problems (with misconceptions & objectives)
+# ===================================================================
+def seed_hifi_problems():
+    """Seed high-fidelity problems from hifi_problems.json."""
+    print("── Seeding high-fidelity problems …")
+
+    if not os.path.exists(HIFI_PROBLEMS_FILE):
+        print(f"   ⚠ hifi_problems.json not found — skipping")
+        return
+
+    data = _load_json(HIFI_PROBLEMS_FILE)
+    total_p = total_s = total_o = 0
+
+    for prob_data in data.get("problems", []):
+        ext_id = prob_data.get("id", "")
+        subject = prob_data.get("subject", "")
+        topic = prob_data.get("topic", "")
+        subtopic = prob_data.get("subtopic", "")
+        difficulty_raw = prob_data.get("difficulty", "Medium")
+        difficulty = NEW_DIFFICULTY_MAP.get(difficulty_raw, 2)
+        problem_type = prob_data.get("problemType", "")
+        neb_alignment = prob_data.get("neb_alignment", "")
+        problem_statement = prob_data.get("problemStatement", prob_data.get("text", ""))
+        grade_levels = prob_data.get("gradeLevels", [])
+        key_objectives = prob_data.get("keyLearningObjectives", [])
+        misconceptions = prob_data.get("commonMisconceptions", [])
+
+        concept_id = _find_or_create_concept(subtopic or topic, subject)
+
+        title = prob_data.get("title", f"{ext_id}: {topic}")
+        if len(title) > 255:
+            title = title[:252] + "..."
+
+        # Skip if ext_id already exists
+        if ext_id and Problem.query.filter_by(ext_id=ext_id).first():
+            print(f"   ~ Skipping duplicate {ext_id}")
+            continue
+
+        problem = Problem(
+            ext_id=ext_id,
+            concept_id=concept_id,
+            title=title,
+            description=problem_statement,
+            difficulty=difficulty,
+            subject=subject,
+            topic=topic,
+            subtopic=subtopic,
+            problem_type=problem_type,
+            neb_alignment=neb_alignment,
+            problem_statement=problem_statement,
+            key_learning_objectives=key_objectives,
+            common_misconceptions=misconceptions,
+        )
+        db.session.add(problem)
+        db.session.flush()
+        total_p += 1
+        print(f"   + Problem [{problem.id}] {ext_id}: {title[:50]}")
+
+        # Handle both new 'steps' format and old 'checkpoints' format
+        step_list = prob_data.get("steps", prob_data.get("checkpoints", []))
+
+        for i, step_data in enumerate(step_list, 1):
+            # Support both formats
+            step_number = step_data.get("stepNumber", i)
+            step_title = step_data.get("stepTitle", step_data.get("instruction", f"Step {i}"))
+            step_description = step_data.get("stepDescription", step_data.get("question", ""))
+            correct_answer = step_data.get("correctAnswer", "")
+            explanation = step_data.get("explanation", "")
+
+            # Get options
+            raw_options = step_data.get("options", [])
+            choices = step_data.get("choices", [])  # old format
+
+            step = Step(
+                problem_id=problem.id,
+                step_number=step_number,
+                step_title=step_title,
+                step_description=step_description,
+                correct_answer=correct_answer,
+                explanation=explanation,
+            )
+            db.session.add(step)
+            db.session.flush()
+            total_s += 1
+
+            if raw_options:  # new format: flat string list
+                for opt_text in raw_options:
+                    is_correct = (str(opt_text).strip() == str(correct_answer).strip())
+                    db.session.add(StepOption(step_id=step.id, option_text=str(opt_text), is_correct=is_correct))
+                    total_o += 1
+            elif choices:  # old checkpoint format
+                for ch in choices:
+                    db.session.add(StepOption(
+                        step_id=step.id,
+                        option_text=str(ch.get("value", "")),
+                        is_correct=bool(ch.get("is_correct", False)),
+                    ))
+                    # Set correct_answer from first is_correct choice
+                    if ch.get("is_correct") and not step.correct_answer:
+                        step.correct_answer = str(ch.get("value", ""))
+                    total_o += 1
+
+    db.session.commit()
+    print(f"   ✓ {total_p} hifi problems, {total_s} steps, {total_o} options seeded.\n")
 
 
 # ===================================================================
@@ -685,22 +804,23 @@ def main():
 
     with app.app_context():
         # Drop and recreate all tables for a clean seed
-        print("🗑  Dropping existing tables …")
+        print("-- Dropping existing tables ...")
         db.drop_all()
-        print("🔨 Creating tables …")
+        print("-- Creating tables ...")
         db.create_all()
         print()
 
         seed_concepts()
         seed_resources()
         seed_new_problems()
+        seed_hifi_problems()
         seed_diagnostic_questions()
         seed_simulations()
 
-        print("═" * 50)
-        print("✅ Database seeded successfully!")
+        print("=" * 50)
+        print(">> Database seeded successfully!")
         print(f"   DB path: {app.config['SQLALCHEMY_DATABASE_URI']}")
-        print("═" * 50)
+        print("=" * 50)
 
 
 if __name__ == "__main__":

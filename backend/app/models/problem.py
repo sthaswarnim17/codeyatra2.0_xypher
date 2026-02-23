@@ -42,6 +42,8 @@ class Problem(db.Model):
     problem_type = db.Column(db.String(64), nullable=True)           # "Numerical", "Conceptual"
     neb_alignment = db.Column(db.String(256), nullable=True)         # "Vector Addition - Basic"
     problem_statement = db.Column(db.Text, nullable=True)            # full problem text
+    key_learning_objectives = db.Column(db.JSON, nullable=True)       # list of learning goals
+    common_misconceptions = db.Column(db.JSON, nullable=True)         # list of misconception strings
 
     created_at = db.Column(
         db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False
@@ -74,6 +76,8 @@ class Problem(db.Model):
             "problem_type": self.problem_type,
             "neb_alignment": self.neb_alignment,
             "problem_statement": self.problem_statement,
+            "key_learning_objectives": self.key_learning_objectives or [],
+            "common_misconceptions": self.common_misconceptions or [],
         }
         if include_steps:
             data["steps"] = [s.to_dict(include_options=True) for s in self.steps]

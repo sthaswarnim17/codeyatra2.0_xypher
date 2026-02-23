@@ -85,49 +85,87 @@ export default function FunctionGraphing({ conceptId }) {
     const ctx = cvs.getContext("2d");
     const W = cvs.width, H = cvs.height;
     ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = "#0f172a";
+
+    // Background
+    const bg = ctx.createLinearGradient(0, 0, W, H);
+    bg.addColorStop(0, "#060d1a");
+    bg.addColorStop(1, "#0a1628");
+    ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W, H);
 
-    const cx = W / 2, cy = H / 2, scale = 25;
+    const cx = W / 2, cy = H / 2, scale = 28;
 
-    // grid
-    ctx.strokeStyle = "#1e293b";
-    ctx.lineWidth = 1;
-    for (let i = -20; i <= 20; i++) {
+    // Grid (minor + major)
+    for (let i = -Math.ceil(W / 2 / scale) - 1; i <= Math.ceil(W / 2 / scale) + 1; i++) {
       const px = cx + i * scale;
+      const isMajor = i % 5 === 0;
+      ctx.strokeStyle = isMajor ? "rgba(71,85,105,0.55)" : "rgba(30,41,59,0.9)";
+      ctx.lineWidth = isMajor ? 1 : 0.5;
       ctx.beginPath(); ctx.moveTo(px, 0); ctx.lineTo(px, H); ctx.stroke();
-      const py = cy + i * scale;
-      ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(W, py); ctx.stroke();
+      if (isMajor && i !== 0) {
+        ctx.fillStyle = "#475569"; ctx.font = "10px Inter, sans-serif";
+        ctx.textAlign = "center"; ctx.fillText(i, px, cy + 15);
+      }
     }
-    // axes
-    ctx.strokeStyle = "#64748b";
-    ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(W, cy); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, H); ctx.stroke();
+    for (let i = -Math.ceil(H / 2 / scale) - 1; i <= Math.ceil(H / 2 / scale) + 1; i++) {
+      const py = cy + i * scale;
+      const isMajor = i % 5 === 0;
+      ctx.strokeStyle = isMajor ? "rgba(71,85,105,0.55)" : "rgba(30,41,59,0.9)";
+      ctx.lineWidth = isMajor ? 1 : 0.5;
+      ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(W, py); ctx.stroke();
+      if (isMajor && i !== 0) {
+        ctx.fillStyle = "#475569"; ctx.font = "10px Inter, sans-serif";
+        ctx.textAlign = "right"; ctx.fillText(-i, cx - 7, py + 4);
+      }
+    }
 
-    // plot
+    // Axes with arrowheads
+    ctx.setLineDash([]);
+    ctx.strokeStyle = "#64748b"; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(W - 12, cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx, H); ctx.lineTo(cx, 12); ctx.stroke();
+    ctx.fillStyle = "#64748b";
+    ctx.beginPath(); ctx.moveTo(W, cy); ctx.lineTo(W - 14, cy - 4); ctx.lineTo(W - 14, cy + 4); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx - 4, 14); ctx.lineTo(cx + 4, 14); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = "#94a3b8"; ctx.font = "bold 13px Inter, sans-serif"; ctx.textAlign = "left";
+    ctx.fillText("x", W - 10, cy - 9); ctx.fillText("y", cx + 9, 16);
+
+    // Curve with glow
     const { a, b, c } = params;
-    ctx.strokeStyle = "#3b82f6";
-    ctx.lineWidth = 2.5;
+    ctx.shadowBlur = 10; ctx.shadowColor = "#3b82f6";
+    ctx.strokeStyle = "#60a5fa"; ctx.lineWidth = 2.5;
     ctx.beginPath();
+    let first = true;
     for (let px = 0; px <= W; px++) {
       const x = (px - cx) / scale;
       const y = a * x * x + b * x + c;
       const py = cy - y * scale;
-      px === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      if (py < -H || py > 2 * H) { first = true; continue; }
+      first ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      first = false;
     }
     ctx.stroke();
+    ctx.shadowBlur = 0;
 
-    // vertex
+    // Vertex crosshair + dot
     const vx = -b / (2 * (a || 0.001));
     const vy = a * vx * vx + b * vx + c;
+    const vpx = cx + vx * scale, vpy = cy - vy * scale;
+    ctx.setLineDash([4, 4]); ctx.strokeStyle = "rgba(239,68,68,0.3)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(vpx, 0); ctx.lineTo(vpx, H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, vpy); ctx.lineTo(W, vpy); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.shadowBlur = 8; ctx.shadowColor = "#ef4444";
     ctx.fillStyle = "#ef4444";
-    ctx.beginPath();
-    ctx.arc(cx + vx * scale, cy - vy * scale, 5, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = "#f8fafc";
-    ctx.font = "11px Inter, sans-serif";
-    ctx.fillText(`(${vx.toFixed(1)}, ${vy.toFixed(1)})`, cx + vx * scale + 8, cy - vy * scale - 8);
+    ctx.beginPath(); ctx.arc(vpx, vpy, 5, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = "#e2e8f0"; ctx.font = "bold 11px Inter, sans-serif"; ctx.textAlign = "left";
+    ctx.fillText(`(${vx.toFixed(1)}, ${vy.toFixed(1)})`, vpx + 9, vpy - 8);
+
+    // Equation label on canvas
+    ctx.fillStyle = "rgba(15,23,42,0.7)"; ctx.beginPath(); ctx.roundRect(10, 10, 230, 28, 6); ctx.fill();
+    ctx.fillStyle = "#94a3b8"; ctx.font = "12px Inter, sans-serif"; ctx.textAlign = "left";
+    ctx.fillText(`y = ${a.toFixed(1)}x² + ${b.toFixed(1)}x + ${c.toFixed(1)}`, 18, 29);
   }
 
   // ── Handlers ────────────────────────────────────────────────────
