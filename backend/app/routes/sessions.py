@@ -1,16 +1,16 @@
-"""
-Session routes — start a problem-solving session and submit answers.
+﻿"""
+Session routes -- start a problem-solving session and submit step answers.
 
-POST /api/sessions/start                — create session
-POST /api/sessions/<session_id>/submit  — submit answer for current checkpoint
-GET  /api/sessions/<session_id>         — get session state
+POST /api/sessions/start                -- create session
+POST /api/sessions/<session_id>/submit  -- submit answer for current step
+GET  /api/sessions/<session_id>         -- get session state
 """
 
 from datetime import datetime, timezone
 
 from flask import Blueprint, request
 
-from app.models import db, Problem, Checkpoint, CheckpointChoice, StudentProgress
+from app.models import db, Problem, Step, StepOption, StudentProgress
 from app.utils.response import success_response, error_response
 from app.utils.session_manager import (
     create_session,
@@ -20,22 +20,19 @@ from app.utils.session_manager import (
     update_session,
     complete_session,
 )
-from app.utils.diagnostic_engine import evaluate_checkpoint_answer
+from app.utils.diagnostic_engine import evaluate_step_answer, update_student_progress
 
 sessions_bp = Blueprint("sessions", __name__)
 
 
-def _checkpoint_payload(cp: Checkpoint) -> dict:
-    """Build a safe checkpoint dict (no correct answers)."""
-    choices = CheckpointChoice.query.filter_by(checkpoint_id=cp.id).all()
+def _step_payload(step: Step) -> dict:
+    """Build a safe step dict (no correct_answer, no explanation)."""
     return {
-        "id": cp.id,
-        "order": cp.order,
-        "question": cp.question,
-        "unit": cp.unit,
-        "input_type": cp.input_type,
-        "hint": cp.hint,
-        "choices": [{"id": c.id, "label": c.label, "value": c.value} for c in choices],
+        "id": step.id,
+        "step_number": step.step_number,
+        "step_title": step.step_title,
+        "step_description": step.step_description,
+        "options": [{"id": o.id, "option_text": o.option_text} for o in step.options],
     }
 
 
@@ -61,10 +58,10 @@ def start_session():
         concept_id=problem.concept_id,
     )
 
-    first_cp = (
-        Checkpoint.query
+    first_step = (
+        Step.query
         .filter_by(problem_id=problem.id)
-        .order_by(Checkpoint.order)
+        .order_by(Step.step_number)
         .first()
     )
 
@@ -72,7 +69,7 @@ def start_session():
         {
             "session_id": session["session_id"],
             "problem": problem.to_dict(),
-            "current_checkpoint": _checkpoint_payload(first_cp) if first_cp else None,
+            "current_step": _step_payload(first_step) if first_step else None,
             "started_at": session["started_at"],
         },
         status_code=201,
@@ -89,80 +86,66 @@ def submit_answer(session_id):
         return error_response("CONFLICT", "Session already completed.", {}, 409)
 
     data = request.get_json(silent=True) or {}
-    checkpoint_id = data.get("checkpoint_id")
-    selected_value = data.get("selected_value")
+    step_id = data.get("step_id")
+    selected_option_id = data.get("selected_option_id")
     time_spent = data.get("time_spent_seconds", 0)
 
-    # --- validation ---
     errors = {}
-    if checkpoint_id is None:
-        errors["checkpoint_id"] = "Required field."
-    if selected_value is None:
-        errors["selected_value"] = "Required field."
+    if step_id is None:
+        errors["step_id"] = "Required field."
+    if selected_option_id is None:
+        errors["selected_option_id"] = "Required field."
     if errors:
         return error_response("VALIDATION_ERROR", "Missing required fields.", errors, 400)
 
-    checkpoint = Checkpoint.query.get(checkpoint_id)
-    if checkpoint is None:
-        return error_response("NOT_FOUND", "Checkpoint not found.", {"checkpoint_id": checkpoint_id}, 404)
+    step = Step.query.get(step_id)
+    if step is None:
+        return error_response("NOT_FOUND", "Step not found.", {"step_id": step_id}, 404)
 
-    # Count previous attempts on this checkpoint
-    attempt_number = get_attempts_for_checkpoint(session_id, checkpoint_id) + 1
+    # Count previous attempts on this step
+    attempt_number = get_attempts_for_checkpoint(session_id, step_id) + 1
 
     # Log the attempt
     log_attempt(session_id, {
-        "checkpoint_id": checkpoint_id,
-        "selected_value": str(selected_value),
+        "step_id": step_id,
+        "selected_option_id": selected_option_id,
         "attempt_number": attempt_number,
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "time_spent_seconds": time_spent,
     })
 
     # Evaluate
-    result = evaluate_checkpoint_answer(
-        checkpoint=checkpoint,
-        student_answer=str(selected_value),
+    result = evaluate_step_answer(
+        step=step,
+        selected_option_id=int(selected_option_id),
         attempt_number=attempt_number,
         student_id=session["student_id"],
     )
 
-    # If correct, advance to next checkpoint
+    # If correct, advance to next step
     if result["correct"]:
-        all_cps = (
-            Checkpoint.query
+        all_steps = (
+            Step.query
             .filter_by(problem_id=session["problem_id"])
-            .order_by(Checkpoint.order)
+            .order_by(Step.step_number)
             .all()
         )
         current_idx = session["current_checkpoint_index"]
         next_idx = current_idx + 1
 
-        if next_idx >= len(all_cps):
+        if next_idx >= len(all_steps):
             # Problem complete
             complete_session(session_id)
             result["next_action"] = "complete"
-            result["next_checkpoint"] = None
-            result["feedback"] = "Problem completed! All checkpoints passed."
+            result["next_step"] = None
+            result["feedback"] = "Problem completed! All steps passed."
 
             # Update student progress
-            _update_progress(session["student_id"], session["concept_id"])
-
+            update_student_progress(session["student_id"], session["concept_id"])
         else:
             update_session(session_id, {"current_checkpoint_index": next_idx})
-            next_cp = all_cps[next_idx]
-            result["next_checkpoint"] = _checkpoint_payload(next_cp)
-
-    # If backtrack triggered, update session status
-    if result.get("backtrack"):
-        update_session(session_id, {"status": "backtracking"})
-        session_data = get_session(session_id)
-        if session_data:
-            session_data["backtrack_history"].append({
-                "checkpoint_id": checkpoint_id,
-                "error_type": result.get("error_type"),
-                "missing_concept": result.get("missing_concept"),
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-            })
+            next_step = all_steps[next_idx]
+            result["next_step"] = _step_payload(next_step)
 
     return success_response(result)
 
@@ -173,28 +156,3 @@ def get_session_state(session_id):
     if session is None:
         return error_response("NOT_FOUND", "Session not found.", {"session_id": session_id}, 404)
     return success_response(session)
-
-
-def _update_progress(student_id: int, concept_id: int):
-    """Update or create student progress record when a problem is completed."""
-    progress = StudentProgress.query.filter_by(
-        student_id=student_id,
-        concept_id=concept_id,
-    ).first()
-
-    now = datetime.now(timezone.utc)
-
-    if progress is None:
-        progress = StudentProgress(
-            student_id=student_id,
-            concept_id=concept_id,
-            status="in_progress",
-            attempts=1,
-            last_attempted_at=now,
-        )
-        db.session.add(progress)
-    else:
-        progress.attempts = (progress.attempts or 0) + 1
-        progress.last_attempted_at = now
-
-    db.session.commit()
