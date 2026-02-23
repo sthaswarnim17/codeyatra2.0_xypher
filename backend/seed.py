@@ -33,6 +33,7 @@ from app.models import (
     Resource,
     DiagnosticQuestion,
 )
+from app.models.simulation import Simulation
 
 # --------------------------------------------------------------------
 # Paths — JSON files live one level up (e:\Codeyatra_2_0\)
@@ -421,6 +422,100 @@ def seed_diagnostic_questions():
 
 
 # ===================================================================
+# 5. Seed Simulations
+# ===================================================================
+def seed_simulations():
+    """Seed one simulation row per supported simulation type."""
+    print("── Seeding simulations …")
+
+    SIMULATIONS = [
+        {
+            "concept_slug": "vector_decomposition",
+            "simulation_type": "vector_decomposition",
+            "title": "Vector Decomposition Simulator",
+            "description": (
+                "Drag the horizontal (Vx) and vertical (Vy) component arrows "
+                "to match the given velocity vector. Builds intuition for SOH-CAH-TOA "
+                "applied to 2D motion."
+            ),
+            "configuration": {
+                "default_velocity": 25,
+                "default_angle": 35,
+                "tolerance_percent": 10,
+            },
+        },
+        {
+            "concept_slug": "trigonometry",
+            "simulation_type": "function_graphing",
+            "title": "Trigonometric Function Grapher",
+            "description": (
+                "Plot sin, cos, and tan functions and explore how amplitude, "
+                "period, and phase shift affect the graph. Visualise SOH-CAH-TOA "
+                "on the unit circle."
+            ),
+            "configuration": {
+                "functions": ["sin", "cos", "tan"],
+                "x_range": [-360, 360],
+                "default_function": "sin",
+            },
+        },
+        {
+            "concept_slug": "area_under_curves",
+            "simulation_type": "function_graphing",
+            "title": "Area Under Curves Explorer",
+            "description": (
+                "Visualise definite integrals by shading the region between "
+                "a curve and the x-axis. Adjust bounds and observe how the "
+                "signed area changes."
+            ),
+            "configuration": {
+                "functions": ["x^2", "x^3", "sin(x)", "cos(x)"],
+                "default_fn": "x^2",
+                "a": 0,
+                "b": 1,
+            },
+        },
+        {
+            "concept_slug": "electrophilic_addition",
+            "simulation_type": "molecular_structure",
+            "title": "Electrophilic Addition Visualiser",
+            "description": (
+                "Build HBr addition to propene step-by-step. Identify the "
+                "nucleophilic π bond, the electrophile, and apply Markovnikov's "
+                "rule to predict the major product."
+            ),
+            "configuration": {
+                "molecule": "propene",
+                "reagent": "HBr",
+                "expected_product": "2-bromopropane",
+            },
+        },
+    ]
+
+    count = 0
+    for entry in SIMULATIONS:
+        slug = entry["concept_slug"]
+        cid = concept_id_map.get(slug)
+        if cid is None:
+            print(f"   ⚠ Concept slug '{slug}' not in concept_id_map — skipping simulation.")
+            continue
+
+        sim = Simulation(
+            concept_id=cid,
+            simulation_type=entry["simulation_type"],
+            title=entry["title"],
+            description=entry["description"],
+            configuration=entry["configuration"],
+        )
+        db.session.add(sim)
+        count += 1
+        print(f"   + Simulation [{entry['simulation_type']}] → {entry['title']}")
+
+    db.session.commit()
+    print(f"   ✓ {count} simulations seeded.\n")
+
+
+# ===================================================================
 # Main
 # ===================================================================
 def main():
@@ -438,6 +533,7 @@ def main():
         seed_resources()
         seed_problems()
         seed_diagnostic_questions()
+        seed_simulations()
 
         print("═" * 50)
         print("✅ Database seeded successfully!")
