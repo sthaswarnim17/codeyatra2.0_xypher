@@ -38,6 +38,7 @@ def create_app(config_name="default"):
     from app.routes.progress import progress_bp
     from app.routes.students import student_bp
     from app.routes.simulations import simulations_bp
+    from app.routes.sikshya import sikshya_bp
 
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
     app.register_blueprint(concepts_bp, url_prefix="/api/concepts")
@@ -48,6 +49,7 @@ def create_app(config_name="default"):
     app.register_blueprint(progress_bp, url_prefix="/api/progress")
     app.register_blueprint(student_bp, url_prefix="/api/students")
     app.register_blueprint(simulations_bp, url_prefix="/api/simulations")
+    app.register_blueprint(sikshya_bp, url_prefix="/api/sikshya")
 
     # --- create tables ---
     with app.app_context():

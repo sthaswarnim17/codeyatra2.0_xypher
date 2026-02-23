@@ -1,0 +1,986 @@
+{
+  "problems": [
+    {
+      "id": "PHY_001",
+      "subject": "Physics",
+      "topic": "Vectors and Scalars",
+      "subtopic": "Vector Addition and Components",
+      "difficulty": "Easy",
+      "problemType": "Numerical",
+      "gradeLevels": ["Grade 11", "Grade 12"],
+      "neb_alignment": "Vector Addition - Basic",
+      "problemStatement": "A displacement vector of magnitude 10 m is at 30° above the horizontal. Find the horizontal and vertical components of this displacement.",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "stepTitle": "Identify vector magnitude and angle",
+          "stepDescription": "Determine what information we have from the problem",
+          "correctAnswer": "Magnitude A = 10 m, angle θ = 30° above horizontal",
+          "options": [
+            "Magnitude A = 10 m, angle θ = 30° above horizontal",
+            "Magnitude A = 30 m, angle θ = 10° above horizontal",
+            "Magnitude A = 10 m, angle θ = 60° above horizontal",
+            "Magnitude A = 10 m, angle θ = 30° below horizontal"
+          ],
+          "explanation": "The problem clearly states magnitude is 10 m and angle is 30° above the horizontal. Reading the problem carefully prevents common mistakes."
+        },
+        {
+          "stepNumber": 2,
+          "stepTitle": "Apply component formulas",
+          "stepDescription": "Use horizontal and vertical component equations",
+          "correctAnswer": "Ax = A cos(θ) = 10 cos(30°), Ay = A sin(θ) = 10 sin(30°)",
+          "options": [
+            "Ax = A cos(θ) = 10 cos(30°), Ay = A sin(θ) = 10 sin(30°)",
+            "Ax = A sin(θ) = 10 sin(30°), Ay = A cos(θ) = 10 cos(30°)",
+            "Ax = A tan(θ) = 10 tan(30°), Ay = A cos(θ) = 10 cos(30°)",
+            "Ax = A cos(θ) = 10 cos(60°), Ay = A sin(θ) = 10 sin(60°)"
+          ],
+          "explanation": "For an angle measured from horizontal: use cos for horizontal (adjacent) and sin for vertical (opposite). Confusing sin/cos is a common error."
+        },
+        {
+          "stepNumber": 3,
+          "stepTitle": "Calculate numerical values",
+          "stepDescription": "Substitute trigonometric values",
+          "correctAnswer": "Ax = 10 × 0.866 = 8.66 m, Ay = 10 × 0.5 = 5 m",
+          "options": [
+            "Ax = 10 × 0.866 = 8.66 m, Ay = 10 × 0.5 = 5 m",
+            "Ax = 10 × 0.5 = 5 m, Ay = 10 × 0.866 = 8.66 m",
+            "Ax = 10 × 0.707 = 7.07 m, Ay = 10 × 0.707 = 7.07 m",
+            "Ax = 10 × 0.5 = 5 m, Ay = 10 × 1.732 = 17.32 m"
+          ],
+          "explanation": "cos(30°) ≈ 0.866, sin(30°) = 0.5. Students often swap these values or use wrong angle values."
+        }
+      ],
+      "correctStepSequence": [1, 2, 3],
+      "keyLearningObjectives": [
+        "Understand vector components",
+        "Apply trigonometry to vectors",
+        "Distinguish between horizontal and vertical components"
+      ],
+      "commonMisconceptions": [
+        "Confusing sin and cos when decomposing vectors",
+        "Using the complement angle instead of the given angle",
+        "Not recognizing that components must be smaller than the vector magnitude"
+      ]
+    },
+    {
+      "id": "PHY_002",
+      "subject": "Physics",
+      "topic": "Kinematics",
+      "subtopic": "Projectile Motion - Range",
+      "difficulty": "Medium",
+      "problemType": "Numerical",
+      "gradeLevels": ["Grade 11"],
+      "neb_alignment": "Projectile Motion - Standard",
+      "problemStatement": "A projectile is launched at 25 m/s at an angle of 37° above the horizontal from ground level. Calculate the horizontal range. (Take g = 10 m/s², sin(37°) = 0.6, cos(37°) = 0.8, sin(74°) = 0.96)",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "stepTitle": "Identify components of initial velocity",
+          "stepDescription": "Decompose initial velocity into horizontal and vertical components",
+          "correctAnswer": "V₀ₓ = 25 × cos(37°) = 25 × 0.8 = 20 m/s, V₀ᵧ = 25 × sin(37°) = 25 × 0.6 = 15 m/s",
+          "options": [
+            "V₀ₓ = 25 × cos(37°) = 25 × 0.8 = 20 m/s, V₀ᵧ = 25 × sin(37°) = 25 × 0.6 = 15 m/s",
+            "V₀ₓ = 25 × sin(37°) = 25 × 0.6 = 15 m/s, V₀ᵧ = 25 × cos(37°) = 25 × 0.8 = 20 m/s",
+            "V₀ₓ = 25 × 0.37 = 9.25 m/s, V₀ᵧ = 25 × 0.63 = 15.75 m/s",
+            "V₀ₓ = 25 m/s, V₀ᵧ = 0 m/s"
+          ],
+          "explanation": "Horizontal component uses cos (angle from horizontal), vertical uses sin. Option 2 is a classic sin/cos swap error."
+        },
+        {
+          "stepNumber": 2,
+          "stepTitle": "Calculate time of flight",
+          "stepDescription": "Find how long the projectile stays in air using vertical motion",
+          "correctAnswer": "T = 2V₀ᵧ/g = 2 × 15/10 = 3 seconds",
+          "options": [
+            "T = 2V₀ᵧ/g = 2 × 15/10 = 3 seconds",
+            "T = V₀ᵧ/g = 15/10 = 1.5 seconds",
+            "T = V₀ᵧ²/(2g) = 225/20 = 11.25 seconds",
+            "T = 2V₀ₓ/g = 2 × 20/10 = 4 seconds"
+          ],
+          "explanation": "Time of flight depends only on vertical motion. The formula T = 2V₀ᵧ/g is for launch and landing at same height. Using horizontal velocity is incorrect."
+        },
+        {
+          "stepNumber": 3,
+          "stepTitle": "Calculate horizontal range",
+          "stepDescription": "Range = horizontal velocity × time of flight",
+          "correctAnswer": "R = V₀ₓ × T = 20 × 3 = 60 m",
+          "options": [
+            "R = V₀ₓ × T = 20 × 3 = 60 m",
+            "R = V₀ᵧ × T = 15 × 3 = 45 m",
+            "R = (V₀ₓ + V₀ᵧ) × T = 35 × 3 = 105 m",
+            "R = V₀ₓ²/g = 400/10 = 40 m"
+          ],
+          "explanation": "Only horizontal velocity contributes to horizontal distance. Vertical velocity affects flight time, not range directly. This requires understanding decoupling of motion."
+        }
+      ],
+      "correctStepSequence": [1, 2, 3],
+      "keyLearningObjectives": [
+        "Decompose velocity into components",
+        "Understand independence of horizontal and vertical motion",
+        "Apply kinematic equations to projectile motion"
+      ],
+      "commonMisconceptions": [
+        "Thinking vertical velocity affects horizontal distance",
+        "Using sin and cos incorrectly for angle decomposition",
+        "Not recognizing that horizontal velocity remains constant"
+      ]
+    },
+    {
+      "id": "PHY_003",
+      "subject": "Physics",
+      "topic": "Dynamics",
+      "subtopic": "Newton's Laws - Inclined Plane",
+      "difficulty": "Hard",
+      "problemType": "Numerical",
+      "gradeLevels": ["Grade 11", "Grade 12"],
+      "neb_alignment": "Newton's Laws - Complex Application",
+      "problemStatement": "A block of mass 5 kg is placed on a smooth inclined plane inclined at 37° to the horizontal. The block is connected by a string over a pulley to a hanging mass of 3 kg. Find the acceleration of the system. (g = 10 m/s², sin(37°) = 0.6, cos(37°) = 0.8)",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "stepTitle": "Draw free body diagrams and identify forces",
+          "stepDescription": "Analyze forces on both masses separately",
+          "correctAnswer": "Block on plane: Component down plane = m₁g sin(37°) = 50 × 0.6 = 30 N (no friction), Tension T acts up plane. Hanging mass: Weight = m₂g = 30 N down, Tension T acts up.",
+          "options": [
+            "Block on plane: Component down plane = m₁g sin(37°) = 50 × 0.6 = 30 N (no friction), Tension T acts up plane. Hanging mass: Weight = m₂g = 30 N down, Tension T acts up.",
+            "Block on plane: Component down plane = m₁g cos(37°) = 50 × 0.8 = 40 N, Normal force = 30 N. Hanging mass: Weight = 30 N.",
+            "Block on plane experiences friction. Hanging mass has no weight.",
+            "Both masses have identical forces and must move with same velocity."
+          ],
+          "explanation": "For motion down the plane, sin(θ) gives component along plane. cos(θ) gives normal force. 'Smooth' means frictionless. The hanging mass creates tension pulling the block up the plane."
+        },
+        {
+          "stepNumber": 2,
+          "stepTitle": "Write equations of motion for both masses",
+          "stepDescription": "Apply Newton's second law (F_net = ma) to each mass with the same acceleration a",
+          "correctAnswer": "Block (down plane positive): m₁g sin(37°) - T = m₁a → 30 - T = 5a. Hanging mass (down positive): m₂g - T = m₂a → 30 - T = 3a",
+          "options": [
+            "Block (down plane positive): m₁g sin(37°) - T = m₁a → 30 - T = 5a. Hanging mass (down positive): m₂g - T = m₂a → 30 - T = 3a",
+            "Block: T - m₁g sin(37°) = m₁a. Hanging mass: T - m₂g = m₂a",
+            "Both: m₁g sin(37°) + m₂g = (m₁ + m₂)a → 60 = 8a",
+            "Block: 30 = 5a. Hanging mass: 30 = 3a (solving separately)"
+          ],
+          "explanation": "Critical: Both masses have same acceleration (connected by inextensible string). Direction matters - choose consistent positive direction. Tension opposes motion for both."
+        },
+        {
+          "stepNumber": 3,
+          "stepTitle": "Solve the system of equations",
+          "stepDescription": "Eliminate T and solve for acceleration",
+          "correctAnswer": "From eq1: T = 30 - 5a. Substitute into eq2: 30 - (30 - 5a) = 3a → 5a = 3a → 2a = 0 → a = 0 m/s². (System is in equilibrium)",
+          "options": [
+            "From eq1: T = 30 - 5a. Substitute into eq2: 30 - (30 - 5a) = 3a → 5a = 3a → 2a = 0 → a = 0 m/s². (System is in equilibrium)",
+            "Subtract equations: 0 = 5a - 3a → a = 0 (wrong method). OR a = 3 m/s² (arbitrary)",
+            "Add equations: 60 - 2T = 8a. Then use T = 30 to get 0 = 8a, so a = 0",
+            "Subtract: 2a = 0, therefore a = 1.5 m/s²"
+          ],
+          "explanation": "Subtracting the equations (30 - T = 5a) - (30 - T = 3a) gives 0 = 2a, so a = 0. The system is in equilibrium! This is counterintuitive: the 3kg hanging mass exactly balances the 30N component down the 37° plane."
+        },
+        {
+          "stepNumber": 4,
+          "stepTitle": "Physical interpretation",
+          "stepDescription": "Interpret the result in context",
+          "correctAnswer": "The weight of hanging mass (30 N) exactly equals the component of block's weight down the plane (30 N). The system remains at rest (a = 0). Tension T = 30 N throughout.",
+          "options": [
+            "The weight of hanging mass (30 N) exactly equals the component of block's weight down the plane (30 N). The system remains at rest (a = 0). Tension T = 30 N throughout.",
+            "The system accelerates down the plane because the hanging mass is pulling it",
+            "The block accelerates up the plane at 3 m/s²",
+            "Both masses accelerate, but in opposite directions"
+          ],
+          "explanation": "This problem teaches that equilibrium is possible in dynamic systems. Students often assume 'system' means motion, but here forces are perfectly balanced. This is a critical conceptual insight."
+        }
+      ],
+      "correctStepSequence": [1, 2, 3, 4],
+      "keyLearningObjectives": [
+        "Apply Newton's second law to multiple bodies",
+        "Recognize constraints (connected by string = same acceleration)",
+        "Identify equilibrium conditions in complex systems",
+        "Decompose forces on inclined planes"
+      ],
+      "commonMisconceptions": [
+        "Assuming motion must occur in a system (static equilibrium is possible)",
+        "Not recognizing both masses have same magnitude of acceleration",
+        "Confusing direction conventions leading to wrong signs in equations",
+        "Using sin and cos incorrectly for incline problems"
+      ]
+    },
+    {
+      "id": "PHY_004",
+      "subject": "Physics",
+      "topic": "Thermodynamics",
+      "subtopic": "Heat and Temperature",
+      "difficulty": "Easy",
+      "problemType": "Theory",
+      "gradeLevels": ["Grade 11"],
+      "neb_alignment": "Thermal Physics - Conceptual",
+      "problemStatement": "Two objects at different temperatures are placed in thermal contact in an isolated system. Which statement correctly describes what happens?",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "stepTitle": "Understand thermal equilibrium concept",
+          "stepDescription": "Recall the definition and conditions for thermal equilibrium",
+          "correctAnswer": "Thermal equilibrium occurs when two objects reach the same temperature and there is no net heat flow between them.",
+          "options": [
+            "Thermal equilibrium occurs when two objects reach the same temperature and there is no net heat flow between them.",
+            "Thermal equilibrium is when both objects have zero temperature",
+            "Thermal equilibrium occurs when the hotter object transfers all its heat to the cooler object",
+            "Thermal equilibrium requires both objects to have the same mass and specific heat"
+          ],
+          "explanation": "Temperature equality is the defining characteristic. Heat flow depends on temperature difference; when equal, net flow = 0."
+        },
+        {
+          "stepNumber": 2,
+          "stepTitle": "Identify the direction of heat flow",
+          "stepDescription": "Apply the second law of thermodynamics",
+          "correctAnswer": "Heat flows spontaneously from the hotter object to the cooler object until their temperatures become equal.",
+          "options": [
+            "Heat flows spontaneously from the hotter object to the cooler object until their temperatures become equal.",
+            "Heat flows from cooler to hotter object (spontaneous cooling of cold object)",
+            "Heat can flow in either direction depending on the objects' masses",
+            "Heat flows from both objects equally outward"
+          ],
+          "explanation": "Second law: heat flows from high T to low T spontaneously. Reverse flow requires work (not spontaneous)."
+        },
+        {
+          "stepNumber": 3,
+          "stepTitle": "Describe the final state",
+          "stepDescription": "State what happens in an isolated system after sufficient time",
+          "correctAnswer": "Eventually, both objects reach an intermediate temperature called the final equilibrium temperature, and remain at that temperature with no further net heat exchange.",
+          "options": [
+            "Eventually, both objects reach an intermediate temperature called the final equilibrium temperature, and remain at that temperature with no further net heat exchange.",
+            "The hotter object cools to absolute zero while the cooler object heats up",
+            "The objects reach room temperature because they are isolated",
+            "The temperature difference remains constant forever"
+          ],
+          "explanation": "Equilibrium temperature is between initial temperatures. In isolation, both temperature and total internal energy remain constant after equilibrium."
+        }
+      ],
+      "correctStepSequence": [1, 2, 3],
+      "keyLearningObjectives": [
+        "Understand thermal equilibrium definition",
+        "Apply second law of thermodynamics",
+        "Predict equilibrium outcomes qualitatively"
+      ],
+      "commonMisconceptions": [
+        "Thinking heat and temperature are identical",
+        "Assuming heat can flow from cold to hot spontaneously",
+        "Not recognizing that isolated systems reach steady state"
+      ]
+    },
+    {
+      "id": "PHY_005",
+      "subject": "Physics",
+      "topic": "Waves",
+      "subtopic": "Doppler Effect",
+      "difficulty": "Medium",
+      "problemType": "Numerical",
+      "gradeLevels": ["Grade 12"],
+      "neb_alignment": "Wave Motion - Doppler Shift",
+      "problemStatement": "An ambulance with siren frequency 1000 Hz moves toward a stationary observer at 20 m/s. The speed of sound is 340 m/s. Find the frequency heard by the observer.",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "stepTitle": "Identify the Doppler scenario",
+          "stepDescription": "Determine which form of Doppler equation applies",
+          "correctAnswer": "Source moving toward stationary observer: f' = f(v_sound)/(v_sound - v_source)",
+          "options": [
+            "Source moving toward stationary observer: f' = f(v_sound)/(v_sound - v_source)",
+            "Observer moving toward stationary source: f' = f(1 + v_observer/v_sound)",
+            "Both moving toward each other: f' = f(v_sound + v_observer)/(v_sound - v_source)",
+            "Source moving away: f' = f(v_sound)/(v_sound + v_source)"
+          ],
+          "explanation": "Critical: source approaching stationary observer uses denominator (v - v_source). Observer approaching uses numerator (v + v_obs). Easy to confuse."
+        },
+        {
+          "stepNumber": 2,
+          "stepTitle": "Substitute values into formula",
+          "stepDescription": "Apply the correct Doppler formula with given values",
+          "correctAnswer": "f' = 1000 × (340)/(340 - 20) = 1000 × 340/320",
+          "options": [
+            "f' = 1000 × (340)/(340 - 20) = 1000 × 340/320",
+            "f' = 1000 × (340 + 20)/340 = 1000 × 360/340",
+            "f' = 1000 × (340 - 20)/340 = 1000 × 320/340",
+            "f' = 1000 × (340)/(340 + 20) = 1000 × 340/360"
+          ],
+          "explanation": "Source moving toward observer decreases wavelength → higher frequency → denominator is smaller. Option 3 has inverted fraction (observer moving away formula)."
+        },
+        {
+          "stepNumber": 3,
+          "stepTitle": "Calculate the observed frequency",
+          "stepDescription": "Compute the numerical result",
+          "correctAnswer": "f' = 1000 × 340/320 = 1000 × 1.0625 = 1062.5 Hz ≈ 1063 Hz",
+          "options": [
+            "f' = 1000 × 340/320 = 1000 × 1.0625 = 1062.5 Hz ≈ 1063 Hz",
+            "f' = 1000 × 320/340 = 1000 × 0.941 = 941 Hz",
+            "f' = 1000 × 360/340 = 1000 × 1.059 = 1059 Hz",
+            "f' = 1000 + 20 = 1020 Hz"
+          ],
+          "explanation": "Approaching source: observed frequency > source frequency. 1063 Hz > 1000 Hz confirms answer. Option 2 (941 Hz) would be for receding source."
+        }
+      ],
+      "correctStepSequence": [1, 2, 3],
+      "keyLearningObjectives": [
+        "Identify correct Doppler formula for scenario",
+        "Understand why frequency changes (wavelength compression)",
+        "Apply correct mathematical sign conventions"
+      ],
+      "commonMisconceptions": [
+        "Confusing approaching vs receding scenarios",
+        "Using wrong Doppler formula for the given condition",
+        "Not recognizing that observed frequency increases for approaching source"
+      ]
+    },
+    {
+      "id": "CHEM_001",
+      "subject": "Chemistry",
+      "topic": "Chemical Bonding",
+      "subtopic": "Ionic vs Covalent Bonds",
+      "difficulty": "Easy",
+      "problemType": "Theory",
+      "gradeLevels": ["Grade 11"],
+      "neb_alignment": "Structure of Atoms and Molecules",
+      "problemStatement": "Compare and contrast ionic and covalent bonds in terms of electron transfer/sharing and the types of elements involved.",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "stepTitle": "Define electron transfer in ionic bonds",
+          "stepDescription": "Explain the mechanism of ionic bonding",
+          "correctAnswer": "Ionic bonds form through complete electron transfer from a metal to a nonmetal, creating charged ions (cation and anion) that attract electrostatically.",
+          "options": [
+            "Ionic bonds form through complete electron transfer from a metal to a nonmetal, creating charged ions (cation and anion) that attract electrostatically.",
+            "Ionic bonds form when two nonmetals share electrons equally",
+            "Ionic bonds involve overlapping electron orbitals between two atoms",
+            "Ionic bonds are formed by the attraction of two positive ions"
+          ],
+          "explanation": "Ionic = electron transfer (from metal to nonmetal). This is distinct from sharing. Creates ions with opposite charges."
+        },
+        {
+          "stepNumber": 2,
+          "stepTitle": "Define electron sharing in covalent bonds",
+          "stepDescription": "Explain the mechanism of covalent bonding",
+          "correctAnswer": "Covalent bonds form when two nonmetals share electron pairs, with electrons occupying orbitals around both nuclei.",
+          "options": [
+            "Covalent bonds form when two nonmetals share electron pairs, with electrons occupying orbitals around both nuclei.",
+            "Covalent bonds form when one atom completely transfers electrons to another",
+            "Covalent bonds form between a metal and a nonmetal",
+            "Covalent bonds involve the complete removal of valence electrons"
+          ],
+          "explanation": "Covalent = electron sharing (not transfer). Electrons move between nuclei. Typically nonmetal-nonmetal bonds."
+        },
+        {
+          "stepNumber": 3,
+          "stepTitle": "Compare electronegativity differences",
+          "stepDescription": "Relate bond type to electronegativity values",
+          "correctAnswer": "Ionic bonds occur with large electronegativity differences (>1.7) where complete transfer is favorable. Covalent bonds occur with small electronegativity differences (<1.7) where sharing is favorable.",
+          "options": [
+            "Ionic bonds occur with large electronegativity differences (>1.7) where complete transfer is favorable. Covalent bonds occur with small electronegativity differences (<1.7) where sharing is favorable.",
+            "Both bond types have the same electronegativity difference",
+            "Covalent bonds require larger electronegativity differences than ionic bonds",
+            "Electronegativity difference is irrelevant to bond type"
+          ],
+          "explanation": "Large EN difference → electron transfer (ionic). Small EN difference → electron sharing (covalent). This is a predictive principle."
+        }
+      ],
+      "correctStepSequence": [1, 2, 3],
+      "keyLearningObjectives": [
+        "Distinguish electron transfer from electron sharing",
+        "Classify bonds based on element type",
+        "Relate electronegativity to bond type"
+      ],
+      "commonMisconceptions": [
+        "Confusing ionic and covalent bonding mechanisms",
+        "Thinking ionic bonds occur between nonmetals",
+        "Not understanding that electronegativity determines bond type"
+      ]
+    },
+    {
+      "id": "CHEM_002",
+      "subject": "Chemistry",
+      "topic": "Stoichiometry",
+      "subtopic": "Limiting Reactant",
+      "difficulty": "Medium",
+      "problemType": "Numerical",
+      "gradeLevels": ["Grade 11"],
+      "neb_alignment": "Chemical Calculations",
+      "problemStatement": "Consider the reaction: 2H₂ + O₂ → 2H₂O. If 10 g of H₂ reacts with 50 g of O₂, determine the limiting reactant and calculate the mass of water produced. (Atomic masses: H = 1, O = 16)",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "stepTitle": "Calculate molar masses",
+          "stepDescription": "Determine molar masses of all reactants",
+          "correctAnswer": "M(H₂) = 2 g/mol, M(O₂) = 32 g/mol, M(H₂O) = 18 g/mol",
+          "options": [
+            "M(H₂) = 2 g/mol, M(O₂) = 32 g/mol, M(H₂O) = 18 g/mol",
+            "M(H₂) = 1 g/mol, M(O₂) = 16 g/mol, M(H₂O) = 18 g/mol",
+            "M(H₂) = 2 g/mol, M(O₂) = 16 g/mol, M(H₂O) = 17 g/mol",
+            "M(H₂) = 2 g/mol, M(O₂) = 48 g/mol, M(H₂O) = 18 g/mol"
+          ],
+          "explanation": "O₂ has two oxygen atoms: 16 + 16 = 32 g/mol. H₂O: 1+1+16 = 18 g/mol. Common error: using atomic masses instead of molar masses."
+        },
+        {
+          "stepNumber": 2,
+          "stepTitle": "Convert to moles",
+          "stepDescription": "Calculate moles of each reactant using n = mass/molar mass",
+          "correctAnswer": "n(H₂) = 10/2 = 5 mol, n(O₂) = 50/32 = 1.56 mol",
+          "options": [
+            "n(H₂) = 10/2 = 5 mol, n(O₂) = 50/32 = 1.56 mol",
+            "n(H₂) = 10 mol, n(O₂) = 50 mol",
+            "n(H₂) = 2 mol, n(O₂) = 32 mol",
+            "n(H₂) = 5 mol, n(O₂) = 1.56 mol × 2 = 3.12 mol (wrong stoichiometry)"
+          ],
+          "explanation": "Simple dimensional analysis: divide mass by molar mass. Option 2 forgets to divide. Option 4 incorrectly applies stoichiometric ratio here."
+        },
+        {
+          "stepNumber": 3,
+          "stepTitle": "Identify limiting reactant using stoichiometry",
+          "stepDescription": "Compare mole ratio to stoichiometric ratio (2:1 for H₂:O₂)",
+          "correctAnswer": "Stoichiometric ratio H₂:O₂ = 2:1. Available ratio = 5:1.56 = 3.2:1. Since 3.2 > 2, we have excess H₂. O₂ is the limiting reactant.",
+          "options": [
+            "Stoichiometric ratio H₂:O₂ = 2:1. Available ratio = 5:1.56 = 3.2:1. Since 3.2 > 2, we have excess H₂. O₂ is the limiting reactant.",
+            "Since 50 g of O₂ > 10 g of H₂, oxygen is in excess. H₂ is limiting.",
+            "Since we have 5 mol of H₂ and only 1.56 mol of O₂, H₂ is limiting",
+            "Both are consumed completely; neither is limiting."
+          ],
+          "explanation": "Must compare mole ratio to stoichiometric ratio, NOT masses. Option 2 uses mass (wrong). Option 3 compares moles incorrectly (confuses larger quantity with excess)."
+        },
+        {
+          "stepNumber": 4,
+          "stepTitle": "Calculate product using limiting reactant",
+          "stepDescription": "Use limiting reactant (O₂) to calculate water produced",
+          "correctAnswer": "From reaction: 1 mol O₂ produces 2 mol H₂O. So 1.56 mol O₂ produces 3.12 mol H₂O. Mass = 3.12 × 18 = 56.16 g ≈ 56.2 g",
+          "options": [
+            "From reaction: 1 mol O₂ produces 2 mol H₂O. So 1.56 mol O₂ produces 3.12 mol H₂O. Mass = 3.12 × 18 = 56.16 g ≈ 56.2 g",
+            "From reaction: 2 mol H₂ produces 2 mol H₂O. So 5 mol H₂ produces 5 mol H₂O. Mass = 5 × 18 = 90 g",
+            "Total mass of products = 10 + 50 = 60 g (conservation of mass with wrong reactants)",
+            "1.56 mol O₂ × 18 g/mol = 28.08 g (directly uses O₂ mass as product)"
+          ],
+          "explanation": "Must use stoichiometric ratio from balanced equation (1 O₂ : 2 H₂O). Option 2 uses excess H₂ instead of limiting O₂. Option 3 ignores stoichiometry. Option 4 confuses mass."
+        }
+      ],
+      "correctStepSequence": [1, 2, 3, 4],
+      "keyLearningObjectives": [
+        "Calculate molar masses correctly",
+        "Convert between mass and moles",
+        "Identify limiting reactant using stoichiometry",
+        "Calculate theoretical yield"
+      ],
+      "commonMisconceptions": [
+        "Comparing masses instead of moles for limiting reactant",
+        "Using larger quantity as 'in excess' without checking ratios",
+        "Forgetting stoichiometric coefficients in product calculations",
+        "Using excess reactant instead of limiting reactant"
+      ]
+    },
+    {
+      "id": "CHEM_003",
+      "subject": "Chemistry",
+      "topic": "Acids and Bases",
+      "subtopic": "pH and pOH Calculations",
+      "difficulty": "Easy",
+      "problemType": "Numerical",
+      "gradeLevels": ["Grade 11"],
+      "neb_alignment": "Ionization of Acids and Bases",
+      "problemStatement": "A solution has a hydrogen ion concentration [H⁺] = 1 × 10⁻⁴ M. Calculate the pH and pOH of this solution. (Kw = 1 × 10⁻¹⁴ at 25°C)",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "stepTitle": "Apply pH formula",
+          "stepDescription": "Use the definition of pH",
+          "correctAnswer": "pH = -log[H⁺] = -log(1 × 10⁻⁴) = 4",
+          "options": [
+            "pH = -log[H⁺] = -log(1 × 10⁻⁴) = 4",
+            "pH = log[H⁺] = log(1 × 10⁻⁴) = -4",
+            "pH = [H⁺] = 1 × 10⁻⁴ = 0.0001",
+            "pH = 10⁻[H⁺] = 10⁻(0.0001) ≈ 1"
+          ],
+          "explanation": "pH uses logarithm: -log(10⁻⁴) = -(-4) = 4. Option 2 forgets the negative sign. Option 3 confuses concentration with pH."
+        },
+        {
+          "stepNumber": 2,
+          "stepTitle": "Calculate pOH using Kw relationship",
+          "stepDescription": "Apply pH + pOH = 14 at 25°C",
+          "correctAnswer": "pH + pOH = 14, so pOH = 14 - pH = 14 - 4 = 10",
+          "options": [
+            "pH + pOH = 14, so pOH = 14 - pH = 14 - 4 = 10",
+            "pOH = pH = 4 (both should be equal)",
+            "pOH = pH + Kw = 4 + 1 × 10⁻¹⁴ ≈ 4",
+            "pOH = 10⁻⁴ = 0.0001 (pOH is concentration)"
+          ],
+          "explanation": "Relationship: pH + pOH = pKw = 14 at 25°C. This is fundamental. Option 2 forgets the sum equals 14."
+        }
+      ],
+      "correctStepSequence": [1, 2],
+      "keyLearningObjectives": [
+        "Understand pH as logarithmic concentration measure",
+        "Apply pH + pOH = 14 relationship",
+        "Interpret pH values (acidic < 7, basic > 7)"
+      ],
+      "commonMisconceptions": [
+        "Confusing concentration with pH",
+        "Forgetting that pH + pOH = 14",
+        "Not recognizing the logarithmic scale and negative sign"
+      ]
+    },
+    {
+      "id": "CHEM_004",
+      "subject": "Chemistry",
+      "topic": "Thermochemistry",
+      "subtopic": "Enthalpy and Hess's Law",
+      "difficulty": "Hard",
+      "problemType": "Numerical",
+      "gradeLevels": ["Grade 12"],
+      "neb_alignment": "Chemical Thermodynamics",
+      "problemStatement": "Given: (1) C(s) + O₂(g) → CO₂(g)  ΔH₁ = -393.5 kJ. (2) 2CO(g) + O₂(g) → 2CO₂(g)  ΔH₂ = -566 kJ. Find ΔH for: 2C(s) + O₂(g) → 2CO(g)",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "stepTitle": "Identify target reaction",
+          "stepDescription": "Write the reaction whose ΔH is required",
+          "correctAnswer": "Target: 2C(s) + O₂(g) → 2CO(g)",
+          "options": [
+            "Target: 2C(s) + O₂(g) → 2CO(g)",
+            "Target: C(s) + O₂(g) → CO₂(g)",
+            "Target: C(s) + ½O₂(g) → CO(g)",
+            "Target: 2CO(g) → 2C(s) + O₂(g)"
+          ],
+          "explanation": "Clearly restate the target to guide the manipulation of given equations."
+        },
+        {
+          "stepNumber": 2,
+          "stepTitle": "Manipulate given equations to form target",
+          "stepDescription": "Use algebraic operations (multiply, reverse, add) to construct target",
+          "correctAnswer": "Equation (1) × 2: 2C(s) + 2O₂(g) → 2CO₂(g)  ΔH = 2(-393.5) = -787 kJ. Reverse equation (2): 2CO₂(g) → 2CO(g) + O₂(g)  ΔH = -(-566) = +566 kJ. Add them.",
+          "options": [
+            "Equation (1) × 2: 2C(s) + 2O₂(g) → 2CO₂(g)  ΔH = 2(-393.5) = -787 kJ. Reverse equation (2): 2CO₂(g) → 2CO(g) + O₂(g)  ΔH = -(-566) = +566 kJ. Add them.",
+            "Just subtract: ΔH = ΔH₂ - ΔH₁ = -566 - (-393.5) = -172.5 kJ",
+            "Use equation (1) directly; equation (2) is irrelevant",
+            "Add both equations directly without manipulation: ΔH = -393.5 + (-566) = -959.5 kJ"
+          ],
+          "explanation": "Hess's Law: reactions can be added like algebraic equations. Must reverse Eq(2) to eliminate CO₂. Must double Eq(1) to get 2C. Option 2 is random subtraction without Hess manipulation."
+        },
+        {
+          "stepNumber": 3,
+          "stepTitle": "Add the manipulated equations",
+          "stepDescription": "Combine equations and calculate net ΔH",
+          "correctAnswer": "2C(s) + 2O₂(g) → 2CO₂(g)  ΔH = -787 kJ, PLUS 2CO₂(g) → 2CO(g) + O₂(g)  ΔH = +566 kJ. Net: 2C(s) + O₂(g) → 2CO(g). ΔH = -787 + 566 = -221 kJ",
+          "options": [
+            "2C(s) + 2O₂(g) → 2CO₂(g)  ΔH = -787 kJ, PLUS 2CO₂(g) → 2CO(g) + O₂(g)  ΔH = +566 kJ. Net: 2C(s) + O₂(g) → 2CO(g). ΔH = -787 + 566 = -221 kJ",
+            "ΔH = -787 + 566 = 221 kJ (positive, wrong sign)",
+            "ΔH = 787 - 566 = 221 kJ",
+            "ΔH = -787 - 566 = -1353 kJ (should add, not both same sign)"
+          ],
+          "explanation": "When adding: one ΔH is negative (exo), one is positive (endo). Net = -221 kJ (overall exothermic). Signs matter in Hess's Law; students often drop negative signs."
+        }
+      ],
+      "correctStepSequence": [1, 2, 3],
+      "keyLearningObjectives": [
+        "Apply Hess's Law systematic approach",
+        "Manipulate chemical equations while tracking ΔH",
+        "Understand enthalpy is state function (path independent)"
+      ],
+      "commonMisconceptions": [
+        "Not reversing equation when direction is reversed",
+        "Forgetting to multiply ΔH when scaling equation",
+        "Confusion about sign convention for endothermic steps",
+        "Random subtraction instead of systematic Hess manipulation"
+      ]
+    },
+    {
+      "id": "CHEM_005",
+      "subject": "Chemistry",
+      "topic": "Oxidation-Reduction",
+      "subtopic": "Balancing Redox Equations",
+      "difficulty": "Hard",
+      "problemType": "Numerical",
+      "gradeLevels": ["Grade 12"],
+      "neb_alignment": "Redox Reactions",
+      "problemStatement": "Balance the redox equation in acidic solution: MnO₄⁻(aq) + Fe²⁺(aq) → Mn²⁺(aq) + Fe³⁺(aq)",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "stepTitle": "Assign oxidation states",
+          "stepDescription": "Determine oxidation state changes for each element",
+          "correctAnswer": "Mn in MnO₄⁻: +7. Mn in Mn²⁺: +2 (gains 5e⁻, reduction, cathode). Fe in Fe²⁺: +2. Fe in Fe³⁺: +3 (loses 1e⁻, oxidation, anode).",
+          "options": [
+            "Mn in MnO₄⁻: +7. Mn in Mn²⁺: +2 (gains 5e⁻, reduction, cathode). Fe in Fe²⁺: +2. Fe in Fe³⁺: +3 (loses 1e⁻, oxidation, anode).",
+            "Mn in MnO₄⁻: +4. Mn in Mn²⁺: +2. Fe unchanged.",
+            "All oxidation states are zero; no redox occurs",
+            "Mn: +7 → +2 (loses 5e⁻), Fe: +2 → +3 (gains 1e⁻) [wrong directions]"
+          ],
+          "explanation": "Mn changes from +7 to +2: reduction (gains electrons). Fe changes from +2 to +3: oxidation (loses). Option 4 reverses the processes."
+        },
+        {
+          "stepNumber": 2,
+          "stepTitle": "Write half-reactions and balance electrons",
+          "stepDescription": "Separate oxidation and reduction, balance electron transfer",
+          "correctAnswer": "Reduction: MnO₄⁻ + 8H⁺ + 5e⁻ → Mn²⁺ + 4H₂O (Mn gains 5e⁻). Oxidation: Fe²⁺ → Fe³⁺ + e⁻ (Fe loses 1e⁻). LCM(5,1)=5, so multiply oxidation by 5: 5Fe²⁺ → 5Fe³⁺ + 5e⁻",
+          "options": [
+            "Reduction: MnO₄⁻ + 8H⁺ + 5e⁻ → Mn²⁺ + 4H₂O (Mn gains 5e⁻). Oxidation: Fe²⁺ → Fe³⁺ + e⁻ (Fe loses 1e⁻). LCM(5,1)=5, so multiply oxidation by 5: 5Fe²⁺ → 5Fe³⁺ + 5e⁻",
+            "Reduction: MnO₄⁻ + 5e⁻ → Mn²⁺ (no water, no H⁺). Oxidation: Fe²⁺ → Fe³⁺ + e⁻",
+            "Both half-reactions already balanced; no electron matching needed",
+            "Multiply reduction by 1 and oxidation by 5 separately, then add [incomplete electron balance]"
+          ],
+          "explanation": "In acidic solution, balance O with H₂O, then H with H⁺. Electrons must be equal before adding. Option 2 omits H₂O and H⁺ (incomplete in acidic medium)."
+        },
+        {
+          "stepNumber": 3,
+          "stepTitle": "Combine half-reactions and verify",
+          "stepDescription": "Add half-reactions and cancel species, check atom/charge balance",
+          "correctAnswer": "MnO₄⁻ + 8H⁺ + 5Fe²⁺ → Mn²⁺ + 5Fe³⁺ + 4H₂O. Check: Atoms balanced (Mn:1, Fe:5, O:4, H:8). Charge: Left = 1(-1) + 8(+1) + 5(+2) = +17. Right = 1(+2) + 5(+3) = +17 ✓",
+          "options": [
+            "MnO₄⁻ + 8H⁺ + 5Fe²⁺ → Mn²⁺ + 5Fe³⁺ + 4H₂O. Check: Atoms balanced (Mn:1, Fe:5, O:4, H:8). Charge: Left = 1(-1) + 8(+1) + 5(+2) = +17. Right = 1(+2) + 5(+3) = +17 ✓",
+            "MnO₄⁻ + 2H⁺ + Fe²⁺ → Mn²⁺ + Fe³⁺ + H₂O (coefficients too small)",
+            "MnO₄⁻ + 8H⁺ + 5Fe²⁺ → Mn²⁺ + 5Fe³⁺ + 8H₂O (too much water)",
+            "No H⁺ or H₂O (treats as if basic or neutral, not acidic)"
+          ],
+          "explanation": "Coefficient of 5 comes from LCM of electrons. Coefficient of 4H₂O balances O from MnO₄⁻. Acidic solution requires H⁺ explicitly."
+        }
+      ],
+      "correctStepSequence": [1, 2, 3],
+      "keyLearningObjectives": [
+        "Assign oxidation states systematically",
+        "Identify oxidation and reduction processes",
+        "Balance half-reactions including H⁺ and H₂O",
+        "Combine half-reactions correctly"
+      ],
+      "commonMisconceptions": [
+        "Forgetting H⁺ and H₂O in acidic solution",
+        "Not finding LCM of electrons correctly",
+        "Mixing up oxidation (loss) and reduction (gain) directions",
+        "Not verifying atom and charge balance"
+      ]
+    },
+    {
+      "id": "MATH_001",
+      "subject": "Mathematics",
+      "topic": "Calculus",
+      "subtopic": "Differentiation - Power Rule",
+      "difficulty": "Easy",
+      "problemType": "Numerical",
+      "gradeLevels": ["Grade 11", "Grade 12"],
+      "neb_alignment": "Differentiation of Functions",
+      "problemStatement": "Find the derivative of f(x) = 5x³ - 2x² + 3x - 7",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "stepTitle": "Recall the power rule for derivatives",
+          "stepDescription": "State the general differentiation rule",
+          "correctAnswer": "Power rule: d/dx(xⁿ) = n·xⁿ⁻¹. Constant rule: d/dx(c) = 0. Sum rule: derivative of sum = sum of derivatives",
+          "options": [
+            "Power rule: d/dx(xⁿ) = n·xⁿ⁻¹. Constant rule: d/dx(c) = 0. Sum rule: derivative of sum = sum of derivatives",
+            "d/dx(xⁿ) = xⁿ⁻¹ (missing the coefficient n)",
+            "d/dx(xⁿ) = n·xⁿ (power stays the same)",
+            "All terms are constants, derivative is 0"
+          ],
+          "explanation": "Power rule is fundamental. Option 2 omits the n coefficient. Option 3 adds instead of subtracts exponent. These are common procedural errors."
+        },
+        {
+          "stepNumber": 2,
+          "stepTitle": "Differentiate each term",
+          "stepDescription": "Apply the power rule to each term separately",
+          "correctAnswer": "d/dx(5x³) = 5·3x² = 15x². d/dx(-2x²) = -2·2x = -4x. d/dx(3x) = 3. d/dx(-7) = 0. (Recall: 3x = 3x¹, so d/dx(3x) = 3·1·x⁰ = 3)",
+          "options": [
+            "d/dx(5x³) = 5·3x² = 15x². d/dx(-2x²) = -2·2x = -4x. d/dx(3x) = 3. d/dx(-7) = 0. (Recall: 3x = 3x¹, so d/dx(3x) = 3·1·x⁰ = 3)",
+            "d/dx(5x³) = 15x². d/dx(-2x²) = -4x. d/dx(3x) = 3x. d/dx(-7) = 0",
+            "d/dx(5x³) = 5x². d/dx(-2x²) = -2x. d/dx(3x) = 3. d/dx(-7) = 0",
+            "d/dx(5x³) = 15x³. d/dx(-2x²) = -4x². d/dx(3x) = 3x. d/dx(-7) = -7"
+          ],
+          "explanation": "Option 2 treats 3x incorrectly (3x → 3x instead of 3x⁰ = 3). Option 3 forgets coefficient in first term (5·3 not just 3). Option 4 keeps exponents same (power rule misapplied)."
+        },
+        {
+          "stepNumber": 3,
+          "stepTitle": "Combine to write final derivative",
+          "stepDescription": "Write f'(x) as sum of differentiated terms",
+          "correctAnswer": "f'(x) = 15x² - 4x + 3",
+          "options": [
+            "f'(x) = 15x² - 4x + 3",
+            "f'(x) = 15x² - 4x",
+            "f'(x) = 15x² - 4x + 3 - 7",
+            "f'(x) = 15x³ - 4x² + 3x"
+          ],
+          "explanation": "Constant term -7 derivatives to 0, not included. Option 3 forgets the -7 → 0 step. Option 4 applies power rule incorrectly (uses wrong exponents)."
+        }
+      ],
+      "correctStepSequence": [1, 2, 3],
+      "keyLearningObjectives": [
+        "Understand the power rule for differentiation",
+        "Apply differentiation to polynomial terms",
+        "Handle constants and coefficient correctly"
+      ],
+      "commonMisconceptions": [
+        "Forgetting the coefficient n in power rule",
+        "Not reducing exponent (n-1)",
+        "Failing to recognize 3x = 3x¹",
+        "Forgetting that constant derivatives to zero"
+      ]
+    },
+    {
+      "id": "MATH_002",
+      "subject": "Mathematics",
+      "topic": "Calculus",
+      "subtopic": "Integration - Indefinite Integrals",
+      "difficulty": "Medium",
+      "problemType": "Numerical",
+      "gradeLevels": ["Grade 12"],
+      "neb_alignment": "Integration of Functions",
+      "problemStatement": "Find the indefinite integral: ∫(6x² - 4x + 1)dx",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "stepTitle": "Recall the power rule for integration",
+          "stepDescription": "State the reverse of differentiation rule",
+          "correctAnswer": "Power rule: ∫xⁿ dx = xⁿ⁺¹/(n+1) + C, where n ≠ -1. Constant rule: ∫c dx = cx + C. Sum rule: ∫[f(x) + g(x)]dx = ∫f(x)dx + ∫g(x)dx",
+          "options": [
+            "Power rule: ∫xⁿ dx = xⁿ⁺¹/(n+1) + C, where n ≠ -1. Constant rule: ∫c dx = cx + C. Sum rule: ∫[f(x) + g(x)]dx = ∫f(x)dx + ∫g(x)dx",
+            "∫xⁿ dx = xⁿ + C (no exponent change)",
+            "∫xⁿ dx = xⁿ⁻¹/n + C (wrong direction)",
+            "No constant of integration C needed for indefinite integrals"
+          ],
+          "explanation": "Integration is reverse of differentiation. Exponent increases (n+1). Constant C is mandatory for indefinite integrals. Option 3 is opposite direction (that's differentiation)."
+        },
+        {
+          "stepNumber": 2,
+          "stepTitle": "Integrate each term",
+          "stepDescription": "Apply power rule to each term with correct coefficients",
+          "correctAnswer": "∫6x² dx = 6 · x³/3 = 2x³. ∫(-4x) dx = -4 · x²/2 = -2x². ∫1 dx = x",
+          "options": [
+            "∫6x² dx = 6 · x³/3 = 2x³. ∫(-4x) dx = -4 · x²/2 = -2x². ∫1 dx = x",
+            "∫6x² dx = 6x³. ∫(-4x) dx = -4x². ∫1 dx = 1",
+            "∫6x² dx = x³. ∫(-4x) dx = -x². ∫1 dx = x",
+            "∫6x² dx = 6x²/2 = 3x². ∫(-4x) dx = -4x. ∫1 dx = 1 (treating as differentiation)"
+          ],
+          "explanation": "Must divide by (n+1), not forget the coefficient. 6·(1/3) = 2. -4·(1/2) = -2. Option 2 forgets division by (n+1). Option 3 forgets coefficient 6. Option 4 applies differentiation rules instead."
+        },
+        {
+          "stepNumber": 3,
+          "stepTitle": "Combine and add constant of integration",
+          "stepDescription": "Write the final indefinite integral result",
+          "correctAnswer": "∫(6x² - 4x + 1)dx = 2x³ - 2x² + x + C",
+          "options": [
+            "∫(6x² - 4x + 1)dx = 2x³ - 2x² + x + C",
+            "∫(6x² - 4x + 1)dx = 2x³ - 2x² + x",
+            "∫(6x² - 4x + 1)dx = 6x³ - 4x² + x + C",
+            "∫(6x² - 4x + 1)dx = 2x³ - 2x² + 1 + C"
+          ],
+          "explanation": "The constant C is essential in indefinite integrals. Option 2 omits C. Option 3 uses wrong coefficients from Step 2 error. Option 4 treats the constant 1 incorrectly."
+        }
+      ],
+      "correctStepSequence": [1, 2, 3],
+      "keyLearningObjectives": [
+        "Understand integration as reverse differentiation",
+        "Apply power rule for integration correctly",
+        "Remember the constant of integration C"
+      ],
+      "commonMisconceptions": [
+        "Forgetting to divide by (n+1)",
+        "Forgetting the constant C",
+        "Confusing integration with differentiation",
+        "Incorrect handling of coefficient in power rule"
+      ]
+    },
+    {
+      "id": "MATH_003",
+      "subject": "Mathematics",
+      "topic": "Linear Algebra",
+      "subtopic": "Determinants and Matrices",
+      "difficulty": "Medium",
+      "problemType": "Numerical",
+      "gradeLevels": ["Grade 11", "Grade 12"],
+      "neb_alignment": "Matrices and Determinants",
+      "problemStatement": "Find the determinant of the matrix A = |2  3| (2×2 matrix with first row [2,3], second row [-1,4])\n                                            |-1 4|",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "stepTitle": "Recall the 2×2 determinant formula",
+          "stepDescription": "State the general formula for 2×2 determinants",
+          "correctAnswer": "For a 2×2 matrix |a  b|, det(A) = ad - bc\n                     |c  d|",
+          "options": [
+            "For a 2×2 matrix |a  b|, det(A) = ad - bc\n                     |c  d|",
+            "det(A) = ac + bd (product of diagonals same way)",
+            "det(A) = ad + bc (all products added)",
+            "det(A) = (a+d) - (b+c) (sum of diagonals)"
+          ],
+          "explanation": "Determinant is main diagonal product minus secondary diagonal product. Option 2 and 3 use wrong products. Option 4 adds instead of multiplying."
+        },
+        {
+          "stepNumber": 2,
+          "stepTitle": "Identify matrix elements",
+          "stepDescription": "Assign a, b, c, d from the given matrix",
+          "correctAnswer": "a = 2, b = 3, c = -1, d = 4",
+          "options": [
+            "a = 2, b = 3, c = -1, d = 4",
+            "a = 2, b = -1, c = 3, d = 4",
+            "a = 4, b = 3, c = -1, d = 2",
+            "a = 2, b = 3, c = 0, d = -1"
+          ],
+          "explanation": "a and d are main diagonal (top-left to bottom-right). b and c are secondary diagonal. Option 2 swaps b and c (row/column confusion). Option 3 uses wrong corners."
+        },
+        {
+          "stepNumber": 3,
+          "stepTitle": "Calculate determinant",
+          "stepDescription": "Substitute into formula and compute",
+          "correctAnswer": "det(A) = ad - bc = (2)(4) - (3)(-1) = 8 - (-3) = 8 + 3 = 11",
+          "options": [
+            "det(A) = ad - bc = (2)(4) - (3)(-1) = 8 - (-3) = 8 + 3 = 11",
+            "det(A) = (2)(4) - (3)(-1) = 8 - 3 = 5",
+            "det(A) = (2)(4) + (3)(-1) = 8 - 3 = 5",
+            "det(A) = (2)(4) - (3)(-1) = 8 + (-3) = 5"
+          ],
+          "explanation": "Critical: subtracting a negative is adding. 8 - (-3) = 8 + 3 = 11. Option 2 treats -(-3) as -3. Option 3 uses wrong formula (addition). Option 4 doesn't convert -(-3) correctly."
+        }
+      ],
+      "correctStepSequence": [1, 2, 3],
+      "keyLearningObjectives": [
+        "Apply 2×2 determinant formula",
+        "Identify matrix elements correctly",
+        "Handle sign operations (subtracting negatives) carefully"
+      ],
+      "commonMisconceptions": [
+        "Using ad + bc instead of ad - bc",
+        "Not handling negative numbers correctly in subtraction",
+        "Confusing row/column positions (a,b,c,d)"
+      ]
+    },
+    {
+      "id": "MATH_004",
+      "subject": "Mathematics",
+      "topic": "Trigonometry",
+      "subtopic": "Trigonometric Identities",
+      "difficulty": "Medium",
+      "problemType": "Theory",
+      "gradeLevels": ["Grade 11"],
+      "neb_alignment": "Trigonometric Relations",
+      "problemStatement": "Prove that sin²θ + cos²θ = 1 using the Pythagorean theorem and the unit circle.",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "stepTitle": "Set up a unit circle",
+          "stepDescription": "Define a point on the unit circle",
+          "correctAnswer": "On the unit circle (radius = 1), consider a point P(x, y) at angle θ from the positive x-axis. By definition, x = cos(θ) and y = sin(θ).",
+          "options": [
+            "On the unit circle (radius = 1), consider a point P(x, y) at angle θ from the positive x-axis. By definition, x = cos(θ) and y = sin(θ).",
+            "A point on the circle has x = sin(θ) and y = cos(θ) (swapped definitions)",
+            "Any circle with equation x² + y² = c², for arbitrary constant c",
+            "The point must be at P(1, 1) regardless of angle θ"
+          ],
+          "explanation": "Trigonometric definitions on unit circle: cos = x-coordinate, sin = y-coordinate. Option 2 swaps them (common error). Option 3 generalizes unnecessarily (unit circle specifically)."
+        },
+        {
+          "stepNumber": 2,
+          "stepTitle": "Apply the equation of the unit circle",
+          "stepDescription": "Write the equation satisfied by all points on a unit circle",
+          "correctAnswer": "All points on the unit circle satisfy the equation: x² + y² = 1² = 1 (since radius = 1)",
+          "options": [
+            "All points on the unit circle satisfy the equation: x² + y² = 1² = 1 (since radius = 1)",
+            "Points satisfy x² - y² = 1 (hyperbola, not circle)",
+            "Points satisfy x + y = 1 (linear equation, not circle)",
+            "Only specific points satisfy x² + y² = 1"
+          ],
+          "explanation": "Circle equation: x² + y² = r². For unit circle, r = 1. Option 2 is hyperbola. Option 3 is line. Option 4 ignores that ALL points on circle satisfy this equation."
+        },
+        {
+          "stepNumber": 3,
+          "stepTitle": "Substitute trigonometric definitions",
+          "stepDescription": "Substitute cos(θ) for x and sin(θ) for y",
+          "correctAnswer": "Substituting x = cos(θ) and y = sin(θ) into x² + y² = 1 gives: cos²(θ) + sin²(θ) = 1, which is the desired identity.",
+          "options": [
+            "Substituting x = cos(θ) and y = sin(θ) into x² + y² = 1 gives: cos²(θ) + sin²(θ) = 1, which is the desired identity.",
+            "Substituting gives sin²(θ) + cos²(θ) = 0 (wrong equality)",
+            "Substituting gives cos(θ) + sin(θ) = 1 (linear form, not squared)",
+            "The substitution yields (cos·θ)² + (sin·θ)² = 1 (misinterprets notation)"
+          ],
+          "explanation": "Direct substitution and algebraic rearrangement. Option 2 has wrong constant. Option 3 loses the squares. Option 4 misinterprets function notation (cos²θ ≠ cos·θ²)."
+        }
+      ],
+      "correctStepSequence": [1, 2, 3],
+      "keyLearningObjectives": [
+        "Understand trigonometric definitions on unit circle",
+        "Apply equation of circle in coordinate geometry",
+        "Prove fundamental trigonometric identity"
+      ],
+      "commonMisconceptions": [
+        "Confusing sin and cos definitions",
+        "Not recognizing x² + y² = 1 as fundamental to unit circle",
+        "Forgetting that proof uses geometric definition, not algebraic manipulation"
+      ]
+    },
+    {
+      "id": "MATH_005",
+      "subject": "Mathematics",
+      "topic": "Algebra",
+      "subtopic": "Quadratic Equations and Roots",
+      "difficulty": "Easy",
+      "problemType": "Numerical",
+      "gradeLevels": ["Grade 11"],
+      "neb_alignment": "Quadratic Equations",
+      "problemStatement": "Solve the quadratic equation 2x² - 5x + 3 = 0 using the quadratic formula.",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "stepTitle": "Identify coefficients a, b, c",
+          "stepDescription": "From the form ax² + bx + c = 0, extract a, b, c",
+          "correctAnswer": "From 2x² - 5x + 3 = 0: a = 2, b = -5, c = 3",
+          "options": [
+            "From 2x² - 5x + 3 = 0: a = 2, b = -5, c = 3",
+            "a = 2, b = 5, c = 3 (wrong sign for b)",
+            "a = 1, b = -5, c = 3 (forgets coefficient of x²)",
+            "a = 2, b = -5, c = -3 (wrong sign for c)"
+          ],
+          "explanation": "Coefficient includes sign. b = -5 (negative), not +5. a is the x² coefficient, not 1. c = 3 (positive) from +3."
+        },
+        {
+          "stepNumber": 2,
+          "stepTitle": "Recall the quadratic formula",
+          "stepDescription": "State the formula for solving quadratic equations",
+          "correctAnswer": "Quadratic formula: x = [-b ± √(b² - 4ac)] / (2a)",
+          "options": [
+            "Quadratic formula: x = [-b ± √(b² - 4ac)] / (2a)",
+            "x = [b ± √(b² - 4ac)] / (2a) (missing negative on b)",
+            "x = [-b ± √(b² - 4ac)] / a (wrong denominator)",
+            "x = [-b ± √(b - 4ac)] / (2a) (missing square on b)"
+          ],
+          "explanation": "Formula has: -b (negative b), discriminant = b² - 4ac, denominator = 2a. Option 2 forgets the negative. Option 3 uses a instead of 2a. Option 4 misses the square on b."
+        },
+        {
+          "stepNumber": 3,
+          "stepTitle": "Calculate discriminant and substitute",
+          "stepDescription": "Find b² - 4ac, then substitute all values",
+          "correctAnswer": "Discriminant: b² - 4ac = (-5)² - 4(2)(3) = 25 - 24 = 1. So x = [-(-5) ± √1] / (2·2) = (5 ± 1) / 4",
+          "options": [
+            "Discriminant: b² - 4ac = (-5)² - 4(2)(3) = 25 - 24 = 1. So x = [-(-5) ± √1] / (2·2) = (5 ± 1) / 4",
+            "Discriminant: (-5)² - 4(2)(3) = 25 - 24 = 1. Then x = (-5 ± 1) / 4",
+            "Discriminant: 5² - 4(2)(3) = 25 - 24 = 1. Then x = (5 ± 1) / 4 (treats -b as b)",
+            "Discriminant: (-5)² - 4(2)(3) = -25 - 24 = -49 (wrong arithmetic)"
+          ],
+          "explanation": "Must compute -(-5) = +5 in numerator. Option 2 forgets -(-5) = +5. Option 3 uses unsigned b. Option 4 miscalculates 25 as -25."
+        },
+        {
+          "stepNumber": 4,
+          "stepTitle": "Calculate the two roots",
+          "stepDescription": "Evaluate both ± solutions",
+          "correctAnswer": "x = (5 + 1)/4 = 6/4 = 3/2 = 1.5, and x = (5 - 1)/4 = 4/4 = 1. Roots: x = 1.5 and x = 1",
+          "options": [
+            "x = (5 + 1)/4 = 6/4 = 3/2 = 1.5, and x = (5 - 1)/4 = 4/4 = 1. Roots: x = 1.5 and x = 1",
+            "x = 5 + 1 = 6, x = 5 - 1 = 4 (forgot to divide by 4)",
+            "x = 6/4 = 1.5, x = 4/4 = 1 (only simplifies one root)",
+            "x = 1.25, x = 1 (miscalculates 6/4)"
+          ],
+          "explanation": "Must divide both numerator parts by denominator 4. 6/4 = 3/2 = 1.5. 4/4 = 1. Option 2 forgets division. Option 4 calculates 6/4 as 1.25 instead of 1.5."
+        }
+      ],
+      "correctStepSequence": [1, 2, 3, 4],
+      "keyLearningObjectives": [
+        "Identify coefficients with correct signs",
+        "Apply quadratic formula systematically",
+        "Handle negative numbers and double negatives",
+        "Simplify fractions and roots correctly"
+      ],
+      "commonMisconceptions": [
+        "Ignoring signs when identifying coefficients",
+        "Forgetting the negative in the numerator of the formula",
+        "Computational errors with double negatives",
+        "Not simplifying roots completely"
+      ]
+    }
+  ]
+}
