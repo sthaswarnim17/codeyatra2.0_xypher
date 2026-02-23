@@ -36,9 +36,13 @@ from app.models import (
 from app.models.simulation import Simulation
 
 # --------------------------------------------------------------------
-# Paths — JSON files live one level up (e:\Codeyatra_2_0\)
+# Paths — JSON files live in backend/data/
 # --------------------------------------------------------------------
+<<<<<<< HEAD
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "Xtra")
+=======
+DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+>>>>>>> main
 
 CONCEPT_FILE = os.path.join(DATA_DIR, "concepts.json")
 RESOURCE_FILE = os.path.join(DATA_DIR, "resources.json")
@@ -47,10 +51,14 @@ PROBLEM_FILES = [
     os.path.join(DATA_DIR, "vector_decomposition.json"),
     os.path.join(DATA_DIR, "projectile_motion.json"),
     os.path.join(DATA_DIR, "basic_algebra.json"),
+<<<<<<< HEAD
     os.path.join(DATA_DIR, "kinematic_equations.json"),
     os.path.join(DATA_DIR, "rotational_dynamics.json"),
     os.path.join(DATA_DIR, "electrophilic_addition.json"),
     os.path.join(DATA_DIR, "area_under_curves.json"),
+=======
+    os.path.join(DATA_DIR, "problems.json"),
+>>>>>>> main
 ]
 
 # Map from slug to DB id (populated during concept seeding)
@@ -92,11 +100,21 @@ def seed_concepts():
         "vector_decomposition": ("physics", "Mechanics"),
         "kinematic_equations": ("physics", "Mechanics"),
         "projectile_motion": ("physics", "Mechanics"),
+<<<<<<< HEAD
         "rotational_dynamics": ("physics", "Rotational Mechanics"),
         "organic_chemistry_basics": ("chemistry", "Organic Chemistry"),
         "electrophilic_addition": ("chemistry", "Organic Chemistry"),
         "calculus_basics": ("math", "Calculus"),
         "area_under_curves": ("math", "Calculus"),
+=======
+        "newtons_laws": ("physics", "Mechanics"),
+        "work_energy_power": ("physics", "Mechanics"),
+        "gravitation": ("physics", "Mechanics"),
+        "simple_harmonic_motion": ("physics", "Waves & Oscillations"),
+        "wave_motion": ("physics", "Waves & Oscillations"),
+        "current_electricity": ("physics", "Electricity"),
+        "magnetic_fields": ("physics", "Magnetism"),
+>>>>>>> main
     }
 
     # Concepts that are NOT directly in the NEB syllabus chapters
@@ -365,6 +383,7 @@ def seed_diagnostic_questions():
             ("At maximum height, the vertical velocity equals?", "0"),
             ("True or False: Horizontal and vertical motions are independent.", "true"),
         ],
+<<<<<<< HEAD
         "rotational_dynamics": [
             ("Torque = r × F × sin(θ). If r=0.5m, F=10N, θ=90°, what is τ?", "5"),
             ("For a uniform disk, the moment of inertia formula is I = ?MR². What is the fraction?", "0.5"),
@@ -399,6 +418,56 @@ def seed_diagnostic_questions():
             ("To find total area, we take the ___ value of below-axis integrals.", "absolute"),
             ("∫₀¹ x² dx = ?", "1/3"),
             ("If f(x) = x² − 1, where does f(x) = 0 for x > 0?", "1"),
+=======
+        "newtons_laws": [
+            ("State Newton's First Law in one sentence.", "An object remains at rest or in uniform motion unless acted upon by a net external force."),
+            ("F = ma. If F = 30N and a = 5 m/s², what is m?", "6"),
+            ("A 10 kg block accelerates at 3 m/s². What is the net force?", "30"),
+            ("According to Newton's Third Law, forces come in what?", "equal and opposite pairs"),
+            ("If net force is zero, what happens to velocity?", "it stays constant"),
+        ],
+        "work_energy_power": [
+            ("Work = Force × Distance × cos(θ). If θ = 90°, work = ?", "0"),
+            ("What is the kinetic energy of a 2 kg ball at 5 m/s?", "25"),
+            ("A 3 kg object at 10 m height. PE = mgh = ?", "300"),
+            ("Power = Work / Time. If W = 500 J and t = 10 s, P = ?", "50"),
+            ("True or False: Total mechanical energy is conserved without friction.", "true"),
+        ],
+        "gravitation": [
+            ("Gravitational force formula: F = ?", "Gm1m2/r²"),
+            ("If distance doubles, gravitational force becomes?", "one quarter"),
+            ("Acceleration due to gravity on Earth's surface ≈ ?", "9.8 m/s²"),
+            ("Escape velocity depends on: mass of planet, radius, or both?", "both"),
+            ("Weight of a 50 kg person on Earth (g=10)? ", "500 N"),
+        ],
+        "simple_harmonic_motion": [
+            ("In SHM, acceleration is proportional to what?", "displacement"),
+            ("Period of a simple pendulum T = 2π√(L/g). If L doubles, T becomes?", "√2 times larger"),
+            ("At the mean position, velocity is?", "maximum"),
+            ("At extreme position, acceleration is?", "maximum"),
+            ("Frequency = 1 / ?", "period"),
+        ],
+        "wave_motion": [
+            ("v = fλ. If f = 500 Hz and λ = 0.66 m, v = ?", "330"),
+            ("In which type of wave do particles vibrate perpendicular to the direction of travel?", "transverse"),
+            ("Sound waves are transverse or longitudinal?", "longitudinal"),
+            ("If wavelength doubles and speed is constant, frequency?", "halves"),
+            ("What is the SI unit of frequency?", "Hz"),
+        ],
+        "current_electricity": [
+            ("Ohm's law: V = ?", "IR"),
+            ("Three 6 Ω resistors in series. Total R = ?", "18"),
+            ("Three 6 Ω resistors in parallel. Total R = ?", "2"),
+            ("Power P = V × I. If V = 12V and I = 3A, P = ?", "36"),
+            ("Which charges flow in a metal conductor?", "electrons"),
+        ],
+        "magnetic_fields": [
+            ("Force on a charge in a magnetic field: F = ?", "qvB sinθ"),
+            ("Force on a current-carrying wire: F = ?", "BIL sinθ"),
+            ("If charge moves parallel to B, force = ?", "0"),
+            ("Right-hand rule gives the direction of what?", "force"),
+            ("SI unit of magnetic field B is?", "Tesla"),
+>>>>>>> main
         ],
     }
 

@@ -8,7 +8,11 @@ POST /api/diagnose/evaluate   — evaluate answers and update mastery
 from datetime import datetime, timezone
 
 from flask import Blueprint, request
+<<<<<<< HEAD
 from flask_jwt_extended import jwt_required, get_jwt_identity
+=======
+from flask_jwt_extended import jwt_required, get_jwt_identity, verify_jwt_in_request
+>>>>>>> main
 
 from app.models import (
     db,
@@ -23,12 +27,28 @@ from app.utils.response import success_response, error_response
 diagnose_bp = Blueprint("diagnose", __name__)
 
 
+<<<<<<< HEAD
 @diagnose_bp.route("", methods=["POST"])
 @jwt_required()
 def start_diagnostic():
     data = request.get_json(silent=True) or {}
 
     student_id = get_jwt_identity()          # from JWT – always present
+=======
+@diagnose_bp.post("/")
+def start_diagnostic():
+    data = request.get_json(silent=True) or {}
+
+    # Accept student_id from body OR extract from JWT token
+    student_id = data.get("student_id")
+    if not student_id:
+        try:
+            verify_jwt_in_request()
+            student_id = get_jwt_identity()
+        except Exception:
+            student_id = None
+
+>>>>>>> main
     concept_id = data.get("concept_id")
     num_questions = data.get("num_questions", 5)
 
@@ -56,7 +76,6 @@ def start_diagnostic():
             404,
         )
 
-    # Create a diagnostic session
     session = DiagnosticSession(
         student_id=int(student_id),
         concept_id=int(concept_id),
@@ -75,8 +94,12 @@ def start_diagnostic():
     )
 
 
+<<<<<<< HEAD
 @diagnose_bp.route("/evaluate", methods=["POST"])
 @jwt_required()
+=======
+@diagnose_bp.post("/evaluate")
+>>>>>>> main
 def evaluate_diagnostic():
     data = request.get_json(silent=True) or {}
 
@@ -101,29 +124,26 @@ def evaluate_diagnostic():
 
     for ans in answers:
         question_id = ans.get("question_id")
-        student_answer = str(ans.get("answer", "")).strip()
+        # Accept either 'answer' (text) or 'choice_id' as the student's response
+        student_answer = str(ans.get("answer") or ans.get("choice_id") or "").strip()
 
         question = DiagnosticQuestion.query.get(question_id)
         if question is None:
             continue
 
-        # Deterministic comparison (case-insensitive, trimmed)
         expected = (question.expected_answer or "").strip()
         is_correct = False
 
-        # Try numeric comparison first
         try:
             expected_num = float(expected)
             student_num = float(student_answer)
             is_correct = abs(expected_num - student_num) < 0.01
         except (ValueError, TypeError):
-            # Fall back to string comparison
             is_correct = student_answer.lower() == expected.lower()
 
         if is_correct:
             correct_count += 1
 
-        # Save answer
         diag_answer = DiagnosticAnswer(
             session_id=session.id,
             question_id=question_id,
@@ -142,7 +162,6 @@ def evaluate_diagnostic():
             ),
         })
 
-    # Calculate score
     score = correct_count / total_count if total_count > 0 else 0.0
     passed = score >= session.pass_threshold
 
@@ -150,7 +169,6 @@ def evaluate_diagnostic():
     session.result = "pass" if passed else "fail"
     session.completed_at = datetime.now(timezone.utc)
 
-    # Update student progress
     now = datetime.now(timezone.utc)
     progress = StudentProgress.query.filter_by(
         student_id=session.student_id,

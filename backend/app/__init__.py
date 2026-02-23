@@ -8,27 +8,38 @@ blueprints, and database setup.
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
+<<<<<<< HEAD
 from config import Config
 
+=======
+import config
+from config import config as config_map
+>>>>>>> main
 from app.models import db
 
 
 jwt = JWTManager()
 
 
+<<<<<<< HEAD
 def create_app(config_name=Config):
+=======
+def create_app(config_cls=config.Config):
+>>>>>>> main
     """Application factory — creates and returns a fully configured Flask app."""
-    from config import config as config_map
 
     app = Flask(__name__)
-    app.config.from_object(config_map[config_name])
+    app.config.from_object(config_cls)
     app.url_map.strict_slashes = False
+<<<<<<< HEAD
     # --- extensions ---
+=======
+
+>>>>>>> main
     db.init_app(app)
     jwt.init_app(app)
     CORS(app)
 
-    # --- blueprints ---
     from app.routes.auth import auth_bp
     from app.routes.concepts import concepts_bp
     from app.routes.problems import problems_bp
@@ -49,7 +60,6 @@ def create_app(config_name=Config):
     app.register_blueprint(simulations_bp, url_prefix="/api/simulations")
     app.register_blueprint(student_bp, url_prefix="/api/students")
 
-    # --- create tables ---
     with app.app_context():
         db.create_all()
 
