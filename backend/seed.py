@@ -38,11 +38,7 @@ from app.models.simulation import Simulation
 # --------------------------------------------------------------------
 # Paths — JSON files live in backend/data/
 # --------------------------------------------------------------------
-<<<<<<< HEAD
-DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "Xtra")
-=======
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
->>>>>>> main
 
 CONCEPT_FILE = os.path.join(DATA_DIR, "concepts.json")
 RESOURCE_FILE = os.path.join(DATA_DIR, "resources.json")
@@ -51,14 +47,7 @@ PROBLEM_FILES = [
     os.path.join(DATA_DIR, "vector_decomposition.json"),
     os.path.join(DATA_DIR, "projectile_motion.json"),
     os.path.join(DATA_DIR, "basic_algebra.json"),
-<<<<<<< HEAD
-    os.path.join(DATA_DIR, "kinematic_equations.json"),
-    os.path.join(DATA_DIR, "rotational_dynamics.json"),
-    os.path.join(DATA_DIR, "electrophilic_addition.json"),
-    os.path.join(DATA_DIR, "area_under_curves.json"),
-=======
     os.path.join(DATA_DIR, "problems.json"),
->>>>>>> main
 ]
 
 # Map from slug to DB id (populated during concept seeding)
@@ -100,13 +89,6 @@ def seed_concepts():
         "vector_decomposition": ("physics", "Mechanics"),
         "kinematic_equations": ("physics", "Mechanics"),
         "projectile_motion": ("physics", "Mechanics"),
-<<<<<<< HEAD
-        "rotational_dynamics": ("physics", "Rotational Mechanics"),
-        "organic_chemistry_basics": ("chemistry", "Organic Chemistry"),
-        "electrophilic_addition": ("chemistry", "Organic Chemistry"),
-        "calculus_basics": ("math", "Calculus"),
-        "area_under_curves": ("math", "Calculus"),
-=======
         "newtons_laws": ("physics", "Mechanics"),
         "work_energy_power": ("physics", "Mechanics"),
         "gravitation": ("physics", "Mechanics"),
@@ -114,7 +96,6 @@ def seed_concepts():
         "wave_motion": ("physics", "Waves & Oscillations"),
         "current_electricity": ("physics", "Electricity"),
         "magnetic_fields": ("physics", "Magnetism"),
->>>>>>> main
     }
 
     # Concepts that are NOT directly in the NEB syllabus chapters
@@ -383,42 +364,6 @@ def seed_diagnostic_questions():
             ("At maximum height, the vertical velocity equals?", "0"),
             ("True or False: Horizontal and vertical motions are independent.", "true"),
         ],
-<<<<<<< HEAD
-        "rotational_dynamics": [
-            ("Torque = r × F × sin(θ). If r=0.5m, F=10N, θ=90°, what is τ?", "5"),
-            ("For a uniform disk, the moment of inertia formula is I = ?MR². What is the fraction?", "0.5"),
-            ("If τ = 10 N·m and I = 2 kg·m², what is α (angular acceleration)?", "5"),
-            ("What is the rotational equivalent of Newton's second law F=ma?", "τ = Iα"),
-            ("True or False: Moment of inertia depends on mass distribution.", "true"),
-        ],
-        "organic_chemistry_basics": [
-            ("How many bonds does carbon typically form?", "4"),
-            ("What is the general formula for alkenes?", "CnH2n"),
-            ("An -OH functional group defines what class of organic compound?", "alcohol"),
-            ("Is a double bond (C=C) more or less reactive than a single bond?", "more"),
-            ("What type of bond is formed by sharing electrons?", "covalent"),
-        ],
-        "electrophilic_addition": [
-            ("In electrophilic addition, what part of the alkene acts as nucleophile?", "π bond"),
-            ("Markovnikov's rule: H adds to the carbon with ___ hydrogens.", "more"),
-            ("Which is more stable: a primary or secondary carbocation?", "secondary"),
-            ("What is the major product of HBr + propene?", "2-bromopropane"),
-            ("In HBr, which atom is the electrophile?", "H"),
-        ],
-        "calculus_basics": [
-            ("What is the derivative of x³?", "3x²"),
-            ("What is ∫x² dx?", "x³/3 + C"),
-            ("What is d/dx of 5x?", "5"),
-            ("The power rule for integration: ∫xⁿ dx = ?", "x^(n+1)/(n+1) + C"),
-            ("What is the derivative of a constant?", "0"),
-        ],
-        "area_under_curves": [
-            ("The area under a curve from a to b is found using?", "definite integral"),
-            ("If f(x) is below the x-axis, the integral is ___ (positive/negative)?", "negative"),
-            ("To find total area, we take the ___ value of below-axis integrals.", "absolute"),
-            ("∫₀¹ x² dx = ?", "1/3"),
-            ("If f(x) = x² − 1, where does f(x) = 0 for x > 0?", "1"),
-=======
         "newtons_laws": [
             ("State Newton's First Law in one sentence.", "An object remains at rest or in uniform motion unless acted upon by a net external force."),
             ("F = ma. If F = 30N and a = 5 m/s², what is m?", "6"),
@@ -467,7 +412,6 @@ def seed_diagnostic_questions():
             ("If charge moves parallel to B, force = ?", "0"),
             ("Right-hand rule gives the direction of what?", "force"),
             ("SI unit of magnetic field B is?", "Tesla"),
->>>>>>> main
         ],
     }
 
