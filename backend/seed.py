@@ -2,12 +2,10 @@
 Database seed script — populates the database from JSON data files.
 
 Reads:
-  concepts.json            → Concept + ConceptPrerequisite
-  resources.json           → Resource
-  trigonometry.json         → Problem + Checkpoint + CheckpointChoice + ErrorPattern
-  vector_decomposition.json → Problem + Checkpoint + CheckpointChoice + ErrorPattern
-  projectile_motion.json    → Problem + Checkpoint + CheckpointChoice + ErrorPattern
-  basic_algebra.json        → Problem + Checkpoint + CheckpointChoice + ErrorPattern
+  concepts.json                    → Concept + ConceptPrerequisite
+  resources.json                   → Resource
+  problem system/
+    sikshya_problems_dataset.json  → Problem + Step + StepOption (30 problems)
 
 Usage:
   python seed.py           (from backend/ directory)
@@ -27,9 +25,8 @@ from app.models import (
     Concept,
     ConceptPrerequisite,
     Problem,
-    Checkpoint,
-    CheckpointChoice,
-    ErrorPattern,
+    Step,
+    StepOption,
     Resource,
     DiagnosticQuestion,
 )
@@ -38,28 +35,11 @@ from app.models.simulation import Simulation
 # --------------------------------------------------------------------
 # Paths — JSON files live in backend/data/
 # --------------------------------------------------------------------
-<<<<<<< HEAD
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "Xtra")
-=======
-DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
->>>>>>> main
+NEW_PROBLEMS_FILE = os.path.join(DATA_DIR, "problem system", "sikshya_problems_dataset.json")
 
 CONCEPT_FILE = os.path.join(DATA_DIR, "concepts.json")
 RESOURCE_FILE = os.path.join(DATA_DIR, "resources.json")
-PROBLEM_FILES = [
-    os.path.join(DATA_DIR, "trigonometry.json"),
-    os.path.join(DATA_DIR, "vector_decomposition.json"),
-    os.path.join(DATA_DIR, "projectile_motion.json"),
-    os.path.join(DATA_DIR, "basic_algebra.json"),
-<<<<<<< HEAD
-    os.path.join(DATA_DIR, "kinematic_equations.json"),
-    os.path.join(DATA_DIR, "rotational_dynamics.json"),
-    os.path.join(DATA_DIR, "electrophilic_addition.json"),
-    os.path.join(DATA_DIR, "area_under_curves.json"),
-=======
-    os.path.join(DATA_DIR, "problems.json"),
->>>>>>> main
-]
 
 # Map from slug to DB id (populated during concept seeding)
 concept_id_map: dict[str, int] = {}
@@ -100,21 +80,13 @@ def seed_concepts():
         "vector_decomposition": ("physics", "Mechanics"),
         "kinematic_equations": ("physics", "Mechanics"),
         "projectile_motion": ("physics", "Mechanics"),
-<<<<<<< HEAD
+
         "rotational_dynamics": ("physics", "Rotational Mechanics"),
         "organic_chemistry_basics": ("chemistry", "Organic Chemistry"),
         "electrophilic_addition": ("chemistry", "Organic Chemistry"),
         "calculus_basics": ("math", "Calculus"),
         "area_under_curves": ("math", "Calculus"),
-=======
-        "newtons_laws": ("physics", "Mechanics"),
-        "work_energy_power": ("physics", "Mechanics"),
-        "gravitation": ("physics", "Mechanics"),
-        "simple_harmonic_motion": ("physics", "Waves & Oscillations"),
-        "wave_motion": ("physics", "Waves & Oscillations"),
-        "current_electricity": ("physics", "Electricity"),
-        "magnetic_fields": ("physics", "Magnetism"),
->>>>>>> main
+
     }
 
     # Concepts that are NOT directly in the NEB syllabus chapters
@@ -194,142 +166,145 @@ def seed_resources():
 
 
 # ===================================================================
-# 3. Seed Problems (with Checkpoints, Choices, ErrorPatterns)
+# 3. Seed Problems from sikshya_problems_dataset.json (Step-based)
 # ===================================================================
-def seed_problems():
-    print("── Seeding problems …")
+
+# Map dataset topic names → concept slugs already in concepts.json
+TOPIC_TO_SLUG: dict[str, str] = {
+    "Vectors and Scalars": "vector_decomposition",
+    "Vector Addition and Components": "vector_decomposition",
+    "Kinematics": "kinematic_equations",
+    "Projectile Motion": "projectile_motion",
+    "Rotational Dynamics": "rotational_dynamics",
+    "Organic Chemistry": "organic_chemistry_basics",
+    "Organic Chemistry Basics": "organic_chemistry_basics",
+    "Electrophilic Addition": "electrophilic_addition",
+    "Trigonometry": "trigonometry",
+    "Basic Algebra": "basic_algebra",
+    "Calculus": "calculus_basics",
+    "Area Under Curves": "area_under_curves",
+}
+
+NEW_DIFFICULTY_MAP = {"easy": 1, "Easy": 1, "medium": 2, "Medium": 2, "hard": 3, "Hard": 3}
+
+
+def _find_or_create_concept(topic: str, subject: str) -> int | None:
+    """Return concept id for given topic, creating one if needed."""
+    # Try existing slug mapping first
+    slug = TOPIC_TO_SLUG.get(topic)
+    if slug and slug in concept_id_map:
+        return concept_id_map[slug]
+
+    # Try partial name match in concept_id_map keys
+    topic_lower = topic.lower().replace(" ", "_")
+    for s, cid in concept_id_map.items():
+        if s in topic_lower or topic_lower in s:
+            return cid
+
+    # Create a new concept for this topic
+    subj_map = {"Physics": "physics", "Chemistry": "chemistry", "Mathematics": "math"}
+    subj = subj_map.get(subject, "physics")
+
+    new_concept = Concept(
+        name=topic,
+        subject=subj,
+        topic=topic,
+        difficulty=2,
+        description=f"{topic} — NEB syllabus topic.",
+        is_syllabus=True,
+        neb_class=11,
+    )
+    db.session.add(new_concept)
+    db.session.flush()
+    slug_key = topic.lower().replace(" ", "_")
+    concept_id_map[slug_key] = new_concept.id
+    print(f"   + New concept [{new_concept.id}] {new_concept.name}")
+    return new_concept.id
+
+
+def seed_new_problems():
+    """Seed problems from sikshya_problems_dataset.json using the Step/StepOption model."""
+    print("── Seeding problems from sikshya_problems_dataset.json …")
+
+    if not os.path.exists(NEW_PROBLEMS_FILE):
+        print(f"   ⚠ Dataset not found: {NEW_PROBLEMS_FILE} — skipping")
+        return
+
+    data = _load_json(NEW_PROBLEMS_FILE)
     total_p = 0
-    total_cp = 0
-    total_ch = 0
-    total_ep = 0
+    total_s = 0
+    total_o = 0
 
-    for path in PROBLEM_FILES:
-        if not os.path.exists(path):
-            print(f"   ⚠ File not found: {path} — skipping")
-            continue
+    for prob_data in data.get("problems", []):
+        ext_id = prob_data.get("id", "")
+        subject = prob_data.get("subject", "")
+        topic = prob_data.get("topic", "")
+        subtopic = prob_data.get("subtopic", "")
+        difficulty_raw = prob_data.get("difficulty", "Easy")
+        difficulty = NEW_DIFFICULTY_MAP.get(difficulty_raw, 1)
+        problem_type = prob_data.get("problemType", "")
+        neb_alignment = prob_data.get("neb_alignment", "")
+        problem_statement = prob_data.get("problemStatement", "")
+        grade_levels = prob_data.get("gradeLevels", [])
 
-        data = _load_json(path)
-        fname = os.path.basename(path)
-        print(f"\n   📄 {fname}")
+        # Try to link to an existing concept
+        concept_id = _find_or_create_concept(topic, subject)
 
-        for prob in data["problems"]:
-            slug = prob["concept_id"]
-            cid = concept_id_map.get(slug)
-            if cid is None:
-                print(f"      ⚠ Unknown concept: {slug} — skipping {prob['title']}")
-                continue
+        title = f"{ext_id}: {topic} — {subtopic}" if subtopic else f"{ext_id}: {topic}"
+        if len(title) > 255:
+            title = title[:252] + "..."
 
-            diff_raw = prob.get("difficulty", "easy")
-            diff = DIFFICULTY_MAP.get(diff_raw, 1) if isinstance(diff_raw, str) else int(diff_raw)
+        problem = Problem(
+            ext_id=ext_id,
+            concept_id=concept_id,
+            title=title,
+            description=problem_statement,
+            difficulty=difficulty,
+            subject=subject,
+            topic=topic,
+            subtopic=subtopic,
+            problem_type=problem_type,
+            neb_alignment=neb_alignment,
+            problem_statement=problem_statement,
+        )
+        db.session.add(problem)
+        db.session.flush()
+        total_p += 1
+        print(f"   + Problem [{problem.id}] {ext_id}: {topic}")
 
-            problem = Problem(
-                concept_id=cid,
-                title=prob["title"],
-                description=prob.get("text", prob.get("description", "")),
-                difficulty=diff,
+        for step_data in prob_data.get("steps", []):
+            step_number = step_data.get("stepNumber", 1)
+            step_title = step_data.get("stepTitle", "")
+            step_description = step_data.get("stepDescription", "")
+            correct_answer = step_data.get("correctAnswer", "")
+            explanation = step_data.get("explanation", "")
+            options_raw = step_data.get("options", [])
+
+            step = Step(
+                problem_id=problem.id,
+                step_number=step_number,
+                step_title=step_title,
+                step_description=step_description,
+                correct_answer=correct_answer,
+                explanation=explanation,
             )
-            db.session.add(problem)
+            db.session.add(step)
             db.session.flush()
-            total_p += 1
-            print(f"      + Problem [{problem.id}] {problem.title}")
+            total_s += 1
 
-            for cp_idx, cp_data in enumerate(prob.get("checkpoints", [])):
-                correct_val = None
-                # Find the correct answer value from choices (keep as string)
-                for ch in cp_data.get("choices", []):
-                    if ch.get("is_correct"):
-                        correct_val = str(ch.get("value", ""))
-                        break
-
-                if correct_val is None:
-                    correct_val = ""
-
-                checkpoint = Checkpoint(
-                    problem_id=problem.id,
-                    order=cp_idx,
-                    question=cp_data.get("question", ""),
-                    correct_answer=correct_val,
-                    unit=cp_data.get("unit", ""),
-                    input_type=cp_data.get("type", "multiple_choice"),
-                    hint=cp_data.get("hint_on_first_wrong", ""),
-                    instruction=cp_data.get("instruction"),
-                    tolerance=0.5,  # generous for matching choice values
+            for opt_text in options_raw:
+                is_correct = (str(opt_text).strip() == str(correct_answer).strip())
+                option = StepOption(
+                    step_id=step.id,
+                    option_text=opt_text,
+                    is_correct=is_correct,
                 )
-                db.session.add(checkpoint)
-                db.session.flush()
-                total_cp += 1
-
-                # --- Choices (store value as string) ---
-                for ch in cp_data.get("choices", []):
-                    raw_val = ch.get("value", "")
-                    label = str(raw_val)
-
-                    choice = CheckpointChoice(
-                        checkpoint_id=checkpoint.id,
-                        label=label,
-                        value=label,
-                        is_correct=ch.get("is_correct", False),
-                    )
-                    db.session.add(choice)
-                    total_ch += 1
-
-                # --- Error Patterns (store trigger as string) ---
-                for ep in cp_data.get("error_patterns", []):
-                    missing_slug = ep.get("missing_concept_id", "")
-                    missing_cid = concept_id_map.get(missing_slug)
-
-                    wrong_label = str(ep.get("wrong_choice", ""))
-
-                    # Derive error type from diagnosis text
-                    diagnosis = ep.get("diagnosis", "")
-                    error_type = _infer_error_type(diagnosis, missing_slug)
-
-                    pattern = ErrorPattern(
-                        checkpoint_id=checkpoint.id,
-                        trigger_value=wrong_label,
-                        trigger_tolerance=0.5,
-                        error_type=error_type,
-                        diagnosis_text=diagnosis,
-                        missing_concept_id=missing_cid,
-                        confidence=0.90,
-                    )
-                    db.session.add(pattern)
-                    total_ep += 1
+                db.session.add(option)
+                total_o += 1
 
     db.session.commit()
-    print(f"\n   ✓ {total_p} problems, {total_cp} checkpoints, {total_ch} choices, {total_ep} error patterns seeded.\n")
+    print(f"\n   ✓ {total_p} problems, {total_s} steps, {total_o} options seeded.\n")
 
-
-def _infer_error_type(diagnosis: str, missing_slug: str) -> str:
-    """Derive a short error type code from the diagnosis text and missing concept."""
-    d = diagnosis.lower()
-    if "sin" in d and "cos" in d:
-        return "TRIG_FUNCTION_SWAP"
-    if "decompos" in d or "no trig" in d or "raw" in d or "magnitude" in d:
-        return "VECTOR_DECOMPOSITION_OMITTED"
-    if "half" in d or "divided by 2" in d:
-        return "HALVED_VALUE"
-    if "forgot" in d and ("double" in d or "2" in d or "back down" in d):
-        return "FORGOT_TO_DOUBLE"
-    if "peak" in d or "half" in d and "time" in d:
-        return "HALF_TIME_USED"
-    if "rearrang" in d or "cannot" in d:
-        return "ALGEBRA_MISCONCEPTION"
-    if missing_slug == "trigonometry":
-        return "TRIG_ERROR"
-    if missing_slug == "vector_decomposition":
-        return "VECTOR_ERROR"
-    if missing_slug == "kinematic_equations":
-        return "KINEMATICS_ERROR"
-    if missing_slug == "basic_algebra":
-        return "ALGEBRA_ERROR"
-    if missing_slug == "right_triangles":
-        return "GEOMETRY_ERROR"
-    if missing_slug == "organic_chemistry_basics":
-        return "ORGANIC_CHEM_ERROR"
-    if missing_slug == "calculus_basics":
-        return "CALCULUS_ERROR"
-    return "UNKNOWN_ERROR"
 
 
 # ===================================================================
@@ -383,7 +358,7 @@ def seed_diagnostic_questions():
             ("At maximum height, the vertical velocity equals?", "0"),
             ("True or False: Horizontal and vertical motions are independent.", "true"),
         ],
-<<<<<<< HEAD
+
         "rotational_dynamics": [
             ("Torque = r × F × sin(θ). If r=0.5m, F=10N, θ=90°, what is τ?", "5"),
             ("For a uniform disk, the moment of inertia formula is I = ?MR². What is the fraction?", "0.5"),
@@ -418,56 +393,7 @@ def seed_diagnostic_questions():
             ("To find total area, we take the ___ value of below-axis integrals.", "absolute"),
             ("∫₀¹ x² dx = ?", "1/3"),
             ("If f(x) = x² − 1, where does f(x) = 0 for x > 0?", "1"),
-=======
-        "newtons_laws": [
-            ("State Newton's First Law in one sentence.", "An object remains at rest or in uniform motion unless acted upon by a net external force."),
-            ("F = ma. If F = 30N and a = 5 m/s², what is m?", "6"),
-            ("A 10 kg block accelerates at 3 m/s². What is the net force?", "30"),
-            ("According to Newton's Third Law, forces come in what?", "equal and opposite pairs"),
-            ("If net force is zero, what happens to velocity?", "it stays constant"),
-        ],
-        "work_energy_power": [
-            ("Work = Force × Distance × cos(θ). If θ = 90°, work = ?", "0"),
-            ("What is the kinetic energy of a 2 kg ball at 5 m/s?", "25"),
-            ("A 3 kg object at 10 m height. PE = mgh = ?", "300"),
-            ("Power = Work / Time. If W = 500 J and t = 10 s, P = ?", "50"),
-            ("True or False: Total mechanical energy is conserved without friction.", "true"),
-        ],
-        "gravitation": [
-            ("Gravitational force formula: F = ?", "Gm1m2/r²"),
-            ("If distance doubles, gravitational force becomes?", "one quarter"),
-            ("Acceleration due to gravity on Earth's surface ≈ ?", "9.8 m/s²"),
-            ("Escape velocity depends on: mass of planet, radius, or both?", "both"),
-            ("Weight of a 50 kg person on Earth (g=10)? ", "500 N"),
-        ],
-        "simple_harmonic_motion": [
-            ("In SHM, acceleration is proportional to what?", "displacement"),
-            ("Period of a simple pendulum T = 2π√(L/g). If L doubles, T becomes?", "√2 times larger"),
-            ("At the mean position, velocity is?", "maximum"),
-            ("At extreme position, acceleration is?", "maximum"),
-            ("Frequency = 1 / ?", "period"),
-        ],
-        "wave_motion": [
-            ("v = fλ. If f = 500 Hz and λ = 0.66 m, v = ?", "330"),
-            ("In which type of wave do particles vibrate perpendicular to the direction of travel?", "transverse"),
-            ("Sound waves are transverse or longitudinal?", "longitudinal"),
-            ("If wavelength doubles and speed is constant, frequency?", "halves"),
-            ("What is the SI unit of frequency?", "Hz"),
-        ],
-        "current_electricity": [
-            ("Ohm's law: V = ?", "IR"),
-            ("Three 6 Ω resistors in series. Total R = ?", "18"),
-            ("Three 6 Ω resistors in parallel. Total R = ?", "2"),
-            ("Power P = V × I. If V = 12V and I = 3A, P = ?", "36"),
-            ("Which charges flow in a metal conductor?", "electrons"),
-        ],
-        "magnetic_fields": [
-            ("Force on a charge in a magnetic field: F = ?", "qvB sinθ"),
-            ("Force on a current-carrying wire: F = ?", "BIL sinθ"),
-            ("If charge moves parallel to B, force = ?", "0"),
-            ("Right-hand rule gives the direction of what?", "force"),
-            ("SI unit of magnetic field B is?", "Tesla"),
->>>>>>> main
+
         ],
     }
 
@@ -600,7 +526,7 @@ def main():
 
         seed_concepts()
         seed_resources()
-        seed_problems()
+        seed_new_problems()
         seed_diagnostic_questions()
         seed_simulations()
 
