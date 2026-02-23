@@ -40,9 +40,7 @@ export default function Navbar() {
       {/* Links */}
       <div className="flex items-center gap-6">
         {navLink("/pathfinder", "Learning Path")}
-        {navLink("/diagnose", "Missions")}
-        {navLink("/progress", "My Progress")}
-        {navLink("/questions", "Explore")}
+        {navLink("/questions", "Missions")}
 
         {user ? (
           <div className="flex items-center gap-3">
