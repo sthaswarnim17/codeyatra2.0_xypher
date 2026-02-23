@@ -11,6 +11,9 @@ import AccountPage from "./pages/AccountPage";
 import DiagnosePage from "./pages/DiagnosePage";
 import PathfinderPage from "./pages/PathfinderPage";
 import ProgressPage from "./pages/ProgressPage";
+import SimulationsPage from "./pages/SimulationsPage";
+import SimulationDetailPage from "./pages/SimulationDetailPage";
+import LearnPage from "./pages/LearnPage";
 
 export default function App() {
   return (
@@ -68,6 +71,30 @@ export default function App() {
                       element={
                         <ProtectedRoute>
                           <AccountPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/simulations"
+                      element={
+                        <ProtectedRoute>
+                          <SimulationsPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/simulations/:type/:conceptId"
+                      element={
+                        <ProtectedRoute>
+                          <SimulationDetailPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/learn/:conceptId"
+                      element={
+                        <ProtectedRoute>
+                          <LearnPage />
                         </ProtectedRoute>
                       }
                     />

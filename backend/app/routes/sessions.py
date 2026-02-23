@@ -39,7 +39,7 @@ def _checkpoint_payload(cp: Checkpoint) -> dict:
     }
 
 
-@sessions_bp.route("/start", methods=["POST"])
+@sessions_bp.post("/start")
 def start_session():
     data = request.get_json(silent=True) or {}
 
@@ -79,7 +79,7 @@ def start_session():
     )
 
 
-@sessions_bp.route("/<session_id>/submit", methods=["POST"])
+@sessions_bp.post("/<session_id>/submit")
 def submit_answer(session_id):
     session = get_session(session_id)
     if session is None:
@@ -112,7 +112,7 @@ def submit_answer(session_id):
     # Log the attempt
     log_attempt(session_id, {
         "checkpoint_id": checkpoint_id,
-        "selected_value": float(selected_value),
+        "selected_value": str(selected_value),
         "attempt_number": attempt_number,
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "time_spent_seconds": time_spent,
@@ -121,7 +121,7 @@ def submit_answer(session_id):
     # Evaluate
     result = evaluate_checkpoint_answer(
         checkpoint=checkpoint,
-        student_answer=float(selected_value),
+        student_answer=str(selected_value),
         attempt_number=attempt_number,
         student_id=session["student_id"],
     )
@@ -167,7 +167,7 @@ def submit_answer(session_id):
     return success_response(result)
 
 
-@sessions_bp.route("/<session_id>", methods=["GET"])
+@sessions_bp.get("/<session_id>")
 def get_session_state(session_id):
     session = get_session(session_id)
     if session is None:

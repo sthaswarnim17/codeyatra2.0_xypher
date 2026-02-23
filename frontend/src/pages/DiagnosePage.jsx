@@ -37,7 +37,7 @@ export default function DiagnosePage() {
   const loadConcepts = useCallback(async () => {
     setScreen(S.LOADING_CONCEPTS);
     try {
-      const res = await authFetch("/api/concepts");
+      const res = await authFetch("/api/concepts?syllabus_only=true");
       const data = await res.json();
       if (!res.ok) throw new Error(data.error?.message ?? "Failed to load concepts.");
       const list = data?.data?.concepts ?? data ?? [];
