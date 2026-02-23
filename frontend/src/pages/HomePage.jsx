@@ -77,44 +77,96 @@ function LandingPage() {
   return (
     <div className="overflow-x-hidden">
       {/* ══════════ HERO ══════════ */}
-      <section className="relative flex flex-col items-center text-center px-6 pt-20 pb-28 overflow-hidden">
-        {/* gradient orbs */}
-        <div className="pointer-events-none absolute -top-24 -left-24 w-96 h-96 rounded-full bg-amber-brand/10 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-amber-brand/10 blur-3xl" />
+      <section className="relative overflow-hidden">
+        {/* background decoration */}
+        <div className="pointer-events-none absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-amber-brand/8 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-32 -right-32 w-[500px] h-[500px] rounded-full bg-amber-brand/8 blur-3xl" />
+        <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-amber-brand/4 blur-[100px]" />
 
-        <span className="inline-flex items-center gap-2 rounded-full border border-amber-brand/30 bg-amber-brand/5 px-4 py-1.5 text-xs font-semibold text-amber-brand mb-6 tracking-wide uppercase">
-          AI-first learning platform
-        </span>
+        <div className="relative max-w-6xl mx-auto px-6 py-16 sm:py-24 flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+          {/* Left — text */}
+          <div className="flex-1 text-center lg:text-left">
+            <span className="inline-flex items-center gap-2 rounded-full border border-amber-brand/30 bg-amber-brand/8 px-4 py-1.5 text-xs font-bold text-amber-brand mb-6 tracking-widest uppercase">
+              AI-first learning platform
+            </span>
 
-        <h1 className="text-5xl sm:text-6xl font-extrabold text-text-primary leading-tight tracking-tight max-w-3xl">
-          Stop Memorising.<br />
-          <span className="text-amber-brand">Start Understanding.</span>
-        </h1>
+            <h1 className="text-5xl sm:text-6xl font-extrabold text-text-primary leading-[1.08] tracking-tight">
+              Stop Memorising.<br />
+              <span className="relative">
+                <span className="relative z-10 text-amber-brand">Start Understanding.</span>
+                <span className="absolute bottom-1 left-0 right-0 h-3 bg-amber-brand/10 rounded-full -z-0" />
+              </span>
+            </h1>
 
-        <p className="mt-6 text-lg text-text-secondary max-w-xl leading-relaxed">
-          Aarvana diagnoses exactly where you're stuck, builds a custom learning path,
-          and turns confusion into clarity — for every subject you study.
-        </p>
+            <p className="mt-6 text-lg text-text-secondary leading-relaxed max-w-lg">
+              Aarvana diagnoses exactly where you&apos;re stuck, builds a custom learning path,
+              and turns confusion into clarity — for every subject you study.
+            </p>
 
-        <div className="flex flex-col sm:flex-row items-center gap-4 mt-10">
-          <Link
-            to="/signup"
-            className="rounded-xl bg-amber-brand hover:bg-amber-hover px-8 py-3.5 text-base font-bold text-white shadow-lg shadow-amber-brand/20 transition-all hover:shadow-amber-brand/30 hover:-translate-y-0.5"
-          >
-            Start learning free →
-          </Link>
-          <Link
-            to="/login"
-            className="rounded-xl border border-gray-300 hover:border-amber-brand bg-white px-8 py-3.5 text-base font-semibold text-text-primary hover:text-amber-brand transition-all"
-          >
-            Log in
-          </Link>
+            <div className="flex flex-col sm:flex-row items-center lg:items-start gap-4 mt-10">
+              <Link
+                to="/signup"
+                className="w-full sm:w-auto rounded-xl bg-amber-brand hover:bg-amber-hover px-8 py-3.5 text-base font-bold text-white shadow-xl shadow-amber-brand/25 transition-all hover:shadow-amber-brand/35 hover:-translate-y-0.5"
+              >
+                Start learning free →
+              </Link>
+              <Link
+                to="/login"
+                className="w-full sm:w-auto rounded-xl border border-gray-300 hover:border-amber-brand bg-white px-8 py-3.5 text-base font-semibold text-text-primary hover:text-amber-brand transition-all"
+              >
+                Log in
+              </Link>
+            </div>
+
+            {/* Trust badges */}
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 mt-8">
+              {[
+                { icon: <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.403 12.652a3 3 0 000-5.304 3 3 0 00-3.75-3.751 3 3 0 00-5.305 0 3 3 0 00-3.751 3.75 3 3 0 000 5.305 3 3 0 003.75 3.751 3 3 0 005.305 0 3 3 0 003.751-3.75zm-2.546-4.46a.75.75 0 00-1.214-.883l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" /></svg>, label: "AI-powered diagnostics" },
+                { icon: <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.403 12.652a3 3 0 000-5.304 3 3 0 00-3.75-3.751 3 3 0 00-5.305 0 3 3 0 00-3.751 3.75 3 3 0 000 5.305 3 3 0 003.75 3.751 3 3 0 005.305 0 3 3 0 003.751-3.75zm-2.546-4.46a.75.75 0 00-1.214-.883l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" /></svg>, label: "Personalised learning paths" },
+                { icon: <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.403 12.652a3 3 0 000-5.304 3 3 0 00-3.75-3.751 3 3 0 00-5.305 0 3 3 0 00-3.751 3.75 3 3 0 000 5.305 3 3 0 003.75 3.751 3 3 0 005.305 0 3 3 0 003.751-3.75zm-2.546-4.46a.75.75 0 00-1.214-.883l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" /></svg>, label: "XP &amp; progress tracking" },
+              ].map((b) => (
+                <span key={b.label} className="flex items-center gap-1.5 text-xs font-medium text-text-muted">
+                  <span className="text-emerald-500">{b.icon}</span>
+                  {b.label}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Right — mascot */}
+          <div className="flex-1 flex items-center justify-center lg:justify-end">
+            <div className="relative">
+              {/* glow ring */}
+              <div className="absolute inset-0 rounded-[2.5rem] bg-amber-brand/15 blur-2xl scale-110" />
+              <div className="relative rounded-[2.5rem] bg-gradient-to-br from-amber-brand/10 via-cream-100 to-amber-brand/5 border border-amber-brand/20 p-4 shadow-2xl shadow-amber-brand/10">
+                <img
+                  src="/landing.png"
+                  alt="Aarvana mascot"
+                  className="w-[300px] sm:w-[380px] lg:w-[420px] h-auto object-contain drop-shadow-xl"
+                />
+              </div>
+              {/* floating stat cards */}
+              <div className="absolute -left-6 top-10 rounded-xl bg-white border border-gray-200 shadow-lg px-4 py-2.5 flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                </div>
+                <div>
+                  <p className="text-[10px] text-text-muted">Concepts mastered</p>
+                  <p className="text-sm font-extrabold text-text-primary">+12 this week</p>
+                </div>
+              </div>
+              <div className="absolute -right-6 bottom-16 rounded-xl bg-white border border-gray-200 shadow-lg px-4 py-2.5 flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-amber-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                </div>
+                <div>
+                  <p className="text-[10px] text-text-muted">XP earned</p>
+                  <p className="text-sm font-extrabold text-amber-brand">1 450 XP</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-
-        {/* Social proof */}
-        <p className="mt-8 text-xs text-text-muted">
-          No credit card required · Free forever for students
-        </p>
       </section>
 
       {/* ══════════ STATS STRIP ══════════ */}

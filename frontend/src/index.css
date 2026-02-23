@@ -20,7 +20,35 @@ html {
 body {
   background-color: var(--color-cream-50);
   color: var(--color-text-primary);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Space Grotesk', 'Plus Jakarta Sans', system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Mascot exit: falls away down + shrinks + tilts */
+@keyframes mascot-exit {
+  0%   { transform: scale(1)    translateY(0px)  rotate(0deg); }
+  100% { transform: scale(0.55) translateY(48px) rotate(12deg); }
+}
+
+/* Mascot enter: springs up from below with overshoot */
+@keyframes mascot-enter {
+  0%   { transform: scale(0.55) translateY(48px) rotate(-8deg); }
+  55%  { transform: scale(1.14) translateY(-14px) rotate(3deg); }
+  75%  { transform: scale(0.95) translateY(5px)  rotate(-1deg); }
+  88%  { transform: scale(1.04) translateY(-3px)  rotate(0.5deg); }
+  100% { transform: scale(1)    translateY(0px)  rotate(0deg); }
+}
+
+.mascot-exiting {
+  animation: mascot-exit 160ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.mascot-entering {
+  animation: mascot-enter 480ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }

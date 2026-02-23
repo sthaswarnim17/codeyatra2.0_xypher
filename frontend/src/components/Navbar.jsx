@@ -1,9 +1,15 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const { user, logout } = useAuth();
+
+  function handleLogout() {
+    logout();
+    navigate("/", { replace: true });
+  }
 
   const initials = user?.name
     ? user.name
@@ -26,15 +32,10 @@ export default function Navbar() {
   );
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-gray-200/60 bg-white/80 backdrop-blur-md px-6 py-4 flex items-center justify-between">
+    <nav className="sticky top-0 z-50 border-b border-gray-200/60 bg-white/80 backdrop-blur-md px-6 py-3 flex items-center justify-between">
       {/* Brand */}
-      <Link to="/" className="flex items-center gap-2">
-        <div className="w-7 h-7 rounded-full bg-amber-brand flex items-center justify-center text-xs font-black text-white">
-          A
-        </div>
-        <span className="font-bold text-text-primary tracking-tight">
-          Aarvana
-        </span>
+      <Link to="/" className="flex items-center">
+        <img src="/logo.png" alt="Aarvana" className="h-16 w-auto" />
       </Link>
 
       {/* Links */}
@@ -62,7 +63,7 @@ export default function Navbar() {
               </span>
             </Link>
             <button
-              onClick={logout}
+              onClick={handleLogout}
               className="flex items-center gap-1 rounded-lg border border-gray-200 hover:border-gray-300 px-3 py-1.5 text-sm text-text-secondary hover:text-text-primary transition-colors"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
