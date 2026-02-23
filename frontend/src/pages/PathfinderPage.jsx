@@ -34,7 +34,7 @@ export default function PathfinderPage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    authFetch("/api/concepts")
+    authFetch("/api/concepts?syllabus_only=true")
       .then((r) => r.json())
       .then((d) => { const list = d?.data?.concepts ?? d ?? []; setConcepts(Array.isArray(list) ? list : []); setLoadingConcepts(false); })
       .catch(() => setLoadingConcepts(false));
@@ -108,7 +108,7 @@ export default function PathfinderPage() {
             >
               <option value="">— Select a concept —</option>
               {concepts.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}{c.class ? ` (Class ${c.class})` : ""}</option>
+                <option key={c.id} value={c.id}>{c.name}{c.neb_class ? ` (Class ${c.neb_class})` : ""}</option>
               ))}
             </select>
             <button
@@ -154,8 +154,11 @@ export default function PathfinderPage() {
 /* ───────────────────── Roadmap Visualization ───────────────────── */
 
 function RoadmapTree({ path, onDiagnose }) {
-  const prereqs = path.path || [];
-  const target = path.concept;
+  const allNodes = path.prerequisite_chain || [];
+  const target = allNodes.length > 0
+    ? allNodes[allNodes.length - 1]
+    : { id: path.concept_id, name: path.concept_name };
+  const prereqs = allNodes.slice(0, -1);
 
   /* Group nodes into tiers (reversed: foundation at bottom) */
   const tiers = [];
