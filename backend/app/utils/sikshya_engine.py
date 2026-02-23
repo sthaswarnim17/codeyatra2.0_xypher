@@ -515,6 +515,8 @@ def run_diagnosis(payload: dict) -> dict:
                 "socraticHint": hint,
                 "recommendedResourceIds": res_ids,
             }
+            if not res_ids and tag != "prereq_unknown":
+                result["recommendation_missing"] = True
 
         step_results.append(result)
 
@@ -535,12 +537,15 @@ def run_diagnosis(payload: dict) -> dict:
                 confidence_for_tag = sr["confidence"]
                 break
 
-        overall_diagnosis.append({
+        diag_item: dict = {
             "prereqTag": tag,
             "confidence": confidence_for_tag,
             "mastery": mastery,
             "recommendedResourceIds": res_ids,
-        })
+        }
+        if not res_ids:
+            diag_item["recommendation_missing"] = True
+        overall_diagnosis.append(diag_item)
 
     # Handle case where failed steps have no matched tag (prereq_unknown)
     unknown_steps = [
