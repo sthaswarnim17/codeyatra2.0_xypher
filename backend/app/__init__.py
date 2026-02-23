@@ -20,15 +20,8 @@ def create_app(config_cls=config.Config):
     """Application factory — creates and returns a fully configured Flask app."""
 
     app = Flask(__name__)
-<<<<<<< HEAD
     app.config.from_object(config_cls)
     app.url_map.strict_slashes = False
-||||||| parent of 68c69e5 (feat: add student profile routes and integrate with AccountPage)
-    app.config.from_object(config_map[config_name])
-=======
-    app.config.from_object(config_map[config_name])
-    app.url_map.strict_slashes = False
->>>>>>> 68c69e5 (feat: add student profile routes and integrate with AccountPage)
 
     db.init_app(app)
     jwt.init_app(app)
