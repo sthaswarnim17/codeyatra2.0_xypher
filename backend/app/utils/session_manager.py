@@ -64,13 +64,13 @@ def delete_session(session_id: str) -> bool:
     return _sessions.pop(session_id, None) is not None
 
 
-def get_attempts_for_checkpoint(session_id: str, checkpoint_id: int) -> int:
-    """Count how many times the student attempted a given checkpoint in this session."""
+def get_attempts_for_checkpoint(session_id: str, step_id: int) -> int:
+    """Count how many times the student attempted a given step in this session."""
     session = _sessions.get(session_id)
     if session is None:
         return 0
     return sum(
         1
         for a in session["attempts_log"]
-        if a.get("checkpoint_id") == checkpoint_id
+        if a.get("step_id") == step_id or a.get("checkpoint_id") == step_id
     )
