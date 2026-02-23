@@ -56,27 +56,17 @@ def get_problem(problem_id):
         .all()
     )
 
-    cp_list = []
-    for cp in checkpoints:
-        choices = CheckpointChoice.query.filter_by(checkpoint_id=cp.id).all()
-        cp_dict = {
-            "id": cp.id,
-            "order": cp.order,
-            "question": cp.question,
-            "unit": cp.unit,
-            "input_type": cp.input_type,
-            "hint": cp.hint,
-            "choices": [
-                {"id": c.id, "label": c.label, "value": c.value}
-                for c in choices
-            ],
-        }
-        cp_list.append(cp_dict)
+    steps_list = []
+    for s in steps:
+        steps_list.append({
+            "id": s.id,
+            "step_number": s.step_number,
+            "step_title": s.step_title,
+            "step_description": s.step_description,
+            "options": [{"id": o.id, "option_text": o.option_text} for o in s.options],
+        })
 
-    return success_response({
-        "id": problem.id,
-        "title": problem.title,
-        "description": problem.description,
-        "concept_id": problem.concept_id,
-        "difficulty": problem.difficulty, "checkpoints": cp_list,
-    })
+    data = problem.to_dict()
+    data["steps"] = steps_list
+    data["step_count"] = len(steps_list)
+    return success_response(data)

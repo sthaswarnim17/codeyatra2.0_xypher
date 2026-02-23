@@ -39,99 +39,112 @@ export default function VectorDecomposition({ conceptId }) {
     const H = cvs.height;
     const O = origin.current;
 
-    ctx.clearRect(0, 0, W, H);
+    // Background
+    const bg = ctx.createLinearGradient(0, 0, W, H);
+    bg.addColorStop(0, "#060d1a");
+    bg.addColorStop(1, "#0a1628");
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
 
-    // Grid
-    ctx.strokeStyle = "#334155";
+    // Minor grid lines
     ctx.lineWidth = 0.5;
     for (let x = 0; x < W; x += 40) {
+      ctx.strokeStyle = x % 200 === 0 ? "rgba(71,85,105,0.5)" : "rgba(30,41,59,0.8)";
       ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
     }
     for (let y = 0; y < H; y += 40) {
+      ctx.strokeStyle = y % 200 === 0 ? "rgba(71,85,105,0.5)" : "rgba(30,41,59,0.8)";
       ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
     }
 
-    // Axes
-    ctx.strokeStyle = "#94a3b8";
-    ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.moveTo(O.x, 0); ctx.lineTo(O.x, H); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(0, O.y); ctx.lineTo(W, O.y); ctx.stroke();
+    // Origin dot
+    const gOrigin = ctx.createRadialGradient(O.x, O.y, 0, O.x, O.y, 7);
+    gOrigin.addColorStop(0, "#cbd5e1");
+    gOrigin.addColorStop(1, "rgba(203,213,225,0)");
+    ctx.beginPath(); ctx.arc(O.x, O.y, 7, 0, Math.PI * 2);
+    ctx.fillStyle = gOrigin; ctx.fill();
 
-    const drawArrow = (sx, sy, ex, ey, color, lw = 3) => {
-      ctx.strokeStyle = color;
-      ctx.fillStyle = color;
-      ctx.lineWidth = lw;
+    // Axes with arrowheads
+    const axisColor = "rgba(148,163,184,0.7)";
+    ctx.strokeStyle = axisColor; ctx.lineWidth = 1.5; ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(0, O.y); ctx.lineTo(W - 12, O.y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(O.x, H); ctx.lineTo(O.x, 12); ctx.stroke();
+    ctx.fillStyle = axisColor;
+    ctx.beginPath(); ctx.moveTo(W, O.y); ctx.lineTo(W - 15, O.y - 5); ctx.lineTo(W - 15, O.y + 5); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(O.x, 0); ctx.lineTo(O.x - 5, 15); ctx.lineTo(O.x + 5, 15); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = "#94a3b8"; ctx.font = "bold 13px Inter, sans-serif";
+    ctx.fillText("x", W - 10, O.y - 9);
+    ctx.fillText("y", O.x + 9, 16);
+
+    const drawArrow = (sx, sy, ex, ey, color, lw = 3, glow = false) => {
+      if (glow) { ctx.shadowBlur = 14; ctx.shadowColor = color; }
+      ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = lw;
       ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(ex, ey); ctx.stroke();
-      const a = Math.atan2(ey - sy, ex - sx);
-      const hs = 10;
+      const a = Math.atan2(ey - sy, ex - sx); const hs = 13;
       ctx.beginPath();
       ctx.moveTo(ex, ey);
-      ctx.lineTo(ex - hs * Math.cos(a - 0.4), ey - hs * Math.sin(a - 0.4));
-      ctx.lineTo(ex - hs * Math.cos(a + 0.4), ey - hs * Math.sin(a + 0.4));
-      ctx.closePath();
-      ctx.fill();
+      ctx.lineTo(ex - hs * Math.cos(a - 0.35), ey - hs * Math.sin(a - 0.35));
+      ctx.lineTo(ex - hs * Math.cos(a + 0.35), ey - hs * Math.sin(a + 0.35));
+      ctx.closePath(); ctx.fill();
+      if (glow) { ctx.shadowBlur = 0; ctx.shadowColor = "transparent"; }
     };
 
-    // Main velocity vector (green)
+    // Main velocity vector (emerald with glow)
     const rad = (angle * Math.PI) / 180;
     const vEndX = O.x + velocity * SCALE * Math.cos(rad);
     const vEndY = O.y - velocity * SCALE * Math.sin(rad);
-    drawArrow(O.x, O.y, vEndX, vEndY, "#22c55e", 3);
-
-    // Label V
-    ctx.fillStyle = "#22c55e";
-    ctx.font = "bold 14px Inter, sans-serif";
-    const lx = (O.x + vEndX) / 2 - 20;
-    const ly = (O.y + vEndY) / 2 - 10;
-    ctx.fillText(`V = ${velocity} m/s`, lx, ly);
+    drawArrow(O.x, O.y, vEndX, vEndY, "#10b981", 4, true);
+    ctx.fillStyle = "#10b981"; ctx.font = "bold 13px Inter, sans-serif";
+    ctx.fillText(`V = ${velocity} m/s`, (O.x + vEndX) / 2 - 28, (O.y + vEndY) / 2 - 12);
 
     // Angle arc
-    ctx.strokeStyle = "#facc15";
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.arc(O.x, O.y, 40, -rad, 0);
-    ctx.stroke();
-    ctx.fillStyle = "#facc15";
-    ctx.font = "12px Inter, sans-serif";
-    ctx.fillText(`${angle}°`, O.x + 44, O.y - 8);
+    ctx.strokeStyle = "#fbbf24"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(O.x, O.y, 50, -rad, 0); ctx.stroke();
+    ctx.fillStyle = "#fbbf24"; ctx.font = "bold 12px Inter, sans-serif";
+    ctx.fillText(`${angle}°`, O.x + 54, O.y - 10);
+
+    // Dashed projections
+    const vxEnd = O.x + studentVx * SCALE;
+    const vyEnd = O.y - studentVy * SCALE;
+    if (studentVx > 0.5 && studentVy > 0.5) {
+      ctx.setLineDash([5, 5]); ctx.strokeStyle = "rgba(148,163,184,0.2)"; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(vxEnd, O.y); ctx.lineTo(vxEnd, vyEnd); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(O.x, vyEnd); ctx.lineTo(vxEnd, vyEnd); ctx.stroke();
+      ctx.setLineDash([]);
+    }
 
     // Student Vx (blue)
-    const vxEnd = O.x + studentVx * SCALE;
-    drawArrow(O.x, O.y, vxEnd, O.y, "#3b82f6", 3);
-    ctx.fillStyle = "#3b82f6";
-    ctx.font = "13px Inter, sans-serif";
-    ctx.fillText(`Vx = ${studentVx.toFixed(1)}`, vxEnd - 30, O.y + 20);
+    drawArrow(O.x, O.y, vxEnd, O.y, "#60a5fa", 3);
+    ctx.fillStyle = "#60a5fa"; ctx.font = "bold 12px Inter, sans-serif";
+    ctx.fillText(`Vx = ${studentVx.toFixed(1)}`, Math.min(vxEnd - 44, W - 100), O.y + 22);
 
     // Student Vy (red)
-    const vyEnd = O.y - studentVy * SCALE;
-    drawArrow(O.x, O.y, O.x, vyEnd, "#ef4444", 3);
-    ctx.fillStyle = "#ef4444";
-    ctx.font = "13px Inter, sans-serif";
-    ctx.fillText(`Vy = ${studentVy.toFixed(1)}`, O.x + 8, vyEnd + 4);
+    drawArrow(O.x, O.y, O.x, vyEnd, "#f87171", 3);
+    ctx.fillStyle = "#f87171"; ctx.font = "bold 12px Inter, sans-serif";
+    ctx.fillText(`Vy = ${studentVy.toFixed(1)}`, O.x + 10, Math.max(vyEnd + 16, 20));
 
-    // Ghost correct vectors when showing solution
+    // Ghost correct vectors
     if (showSolution) {
       const cxEnd = O.x + correctVx * SCALE;
       const cyEnd = O.y - correctVy * SCALE;
-      drawArrow(O.x, O.y, cxEnd, O.y, "rgba(59,130,246,0.3)", 2);
-      drawArrow(O.x, O.y, O.x, cyEnd, "rgba(239,68,68,0.3)", 2);
-      ctx.fillStyle = "#94a3b8";
-      ctx.font = "11px Inter, sans-serif";
-      ctx.fillText(`Correct Vx = ${correctVx.toFixed(1)}`, cxEnd - 50, O.y + 36);
-      ctx.fillText(`Correct Vy = ${correctVy.toFixed(1)}`, O.x + 8, cyEnd - 10);
+      drawArrow(O.x, O.y, cxEnd, O.y, "rgba(96,165,250,0.35)", 2);
+      drawArrow(O.x, O.y, O.x, cyEnd, "rgba(248,113,113,0.35)", 2);
+      ctx.fillStyle = "#94a3b8"; ctx.font = "11px Inter, sans-serif";
+      ctx.fillText(`Correct Vx = ${correctVx.toFixed(1)}`, cxEnd - 60, O.y + 38);
+      ctx.fillText(`Correct Vy = ${correctVy.toFixed(1)}`, O.x + 8, cyEnd - 12);
     }
 
-    // Drag handles — circles at arrow tips
+    // Drag handles — gradient circles
     const drawHandle = (x, y, color) => {
-      ctx.beginPath();
-      ctx.arc(x, y, 8, 0, Math.PI * 2);
-      ctx.fillStyle = color;
-      ctx.globalAlpha = 0.5;
-      ctx.fill();
-      ctx.globalAlpha = 1;
+      const g = ctx.createRadialGradient(x - 2, y - 2, 1, x, y, 10);
+      g.addColorStop(0, color + "cc");
+      g.addColorStop(1, color + "22");
+      ctx.beginPath(); ctx.arc(x, y, 10, 0, Math.PI * 2);
+      ctx.fillStyle = g; ctx.fill();
+      ctx.strokeStyle = color; ctx.lineWidth = 1.5; ctx.stroke();
     };
-    drawHandle(vxEnd, O.y, "#3b82f6");
-    drawHandle(O.x, vyEnd, "#ef4444");
+    drawHandle(vxEnd, O.y, "#60a5fa");
+    drawHandle(O.x, vyEnd, "#f87171");
   }, [velocity, angle, studentVx, studentVy, showSolution, correctVx, correctVy]);
 
   useEffect(() => { draw(); }, [draw]);

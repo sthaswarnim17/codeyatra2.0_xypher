@@ -59,6 +59,13 @@ export default function MolecularStructure() {
     const cx = W / 2, cy = H / 2;
     ctx.clearRect(0, 0, W, H);
 
+    // Dark background
+    const bgGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W, H) * 0.7);
+    bgGrad.addColorStop(0, "#101828");
+    bgGrad.addColorStop(1, "#060d18");
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, W, H);
+
     // project atoms
     const projected = mol.atoms.map((a) => {
       const p = rotatePoint(a.x, a.y, a.z, rotation.x, rotation.y);
@@ -70,17 +77,28 @@ export default function MolecularStructure() {
 
     // draw bonds first
     if (style !== "space-filling") {
+      ctx.lineCap = "round";
       for (let i = 0; i < projected.length; i++) {
         for (let j = i + 1; j < projected.length; j++) {
           const a = projected[i], b = projected[j];
           const dx = a.x - b.x, dy = a.y - b.y, dz = a.z - b.z;
           const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
           if (dist < 1.8) {
+            const bondGrad = ctx.createLinearGradient(a.sx, a.sy, b.sx, b.sy);
+            const ca = ELEMENT_COLORS[a.element] || "#AAAAAA";
+            const cb = ELEMENT_COLORS[b.element] || "#AAAAAA";
+            if (style === "wireframe") {
+              bondGrad.addColorStop(0, ca + "aa");
+              bondGrad.addColorStop(1, cb + "aa");
+            } else {
+              bondGrad.addColorStop(0, ca + "88");
+              bondGrad.addColorStop(0.5, "#99aabb");
+              bondGrad.addColorStop(1, cb + "88");
+            }
             ctx.beginPath();
-            ctx.moveTo(a.sx, a.sy);
-            ctx.lineTo(b.sx, b.sy);
-            ctx.strokeStyle = "#888";
-            ctx.lineWidth = style === "wireframe" ? 2 : 4;
+            ctx.moveTo(a.sx, a.sy); ctx.lineTo(b.sx, b.sy);
+            ctx.strokeStyle = bondGrad;
+            ctx.lineWidth = style === "wireframe" ? 1.5 : 5;
             ctx.stroke();
           }
         }
@@ -102,13 +120,19 @@ export default function MolecularStructure() {
       ctx.arc(a.sx, a.sy, r, 0, Math.PI * 2);
 
       const color = ELEMENT_COLORS[a.element] || "#AAAAAA";
-      // lighten based on depth
-      ctx.fillStyle = color;
-      ctx.globalAlpha = brightness;
+      // Radial gradient for 3D sphere effect
+      const highlightX = a.sx - r * 0.35;
+      const highlightY = a.sy - r * 0.35;
+      const sphereGrad = ctx.createRadialGradient(highlightX, highlightY, r * 0.05, a.sx, a.sy, r);
+      const alpha = Math.round(Math.min(255, 150 + brightness * 105)).toString(16).padStart(2, "0");
+      sphereGrad.addColorStop(0, "#ffffff55");
+      sphereGrad.addColorStop(0.35, color + alpha);
+      sphereGrad.addColorStop(1, color + "44");
+      ctx.fillStyle = sphereGrad;
       ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.strokeStyle = "#555";
-      ctx.lineWidth = 1;
+      // Subtle ring for depth
+      ctx.strokeStyle = "rgba(0,0,0,0.35)";
+      ctx.lineWidth = style === "wireframe" ? 0 : 1;
       ctx.stroke();
 
       if (showLabels) {
@@ -199,7 +223,7 @@ export default function MolecularStructure() {
           <div className="flex gap-2 mb-3 flex-wrap justify-center">
             {Object.keys(MOLECULE_DATA).map((key) => (
               <button key={key} onClick={() => changeMolecule(key)}
-                className={`px-3 py-1 rounded-full text-sm font-medium border transition ${moleculeKey === key ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-gray-700 border-gray-300 hover:border-indigo-400"}`}>
+                className={`px-3 py-1 rounded-full text-sm font-semibold border transition ${moleculeKey === key ? "bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-500/20" : "bg-slate-800 text-slate-300 border-slate-600 hover:border-indigo-400 hover:text-white"}`}>
                 {MOLECULE_DATA[key].formula}
               </button>
             ))}
@@ -207,24 +231,23 @@ export default function MolecularStructure() {
 
           {/* canvas */}
           <canvas ref={canvasRef} width={520} height={400}
-            className="border rounded-lg bg-gray-900 cursor-grab active:cursor-grabbing touch-none"
+            className="rounded-xl border border-slate-700 bg-slate-950 cursor-grab active:cursor-grabbing touch-none w-full"
             onMouseDown={handlePointerDown} onMouseMove={handlePointerMove} onMouseUp={handlePointerUp} onMouseLeave={handlePointerUp}
             onTouchStart={handlePointerDown} onTouchMove={handlePointerMove} onTouchEnd={handlePointerUp} />
 
-          <p className="text-xs text-gray-400 mt-1">Click & drag to rotate</p>
+          <p className="text-xs text-slate-400 mt-1">Drag to rotate · 3D molecular model</p>
 
           {/* controls */}
           <div className="flex gap-4 mt-3 flex-wrap justify-center items-center">
             {["ball-and-stick", "space-filling", "wireframe"].map((s) => (
-              <label key={s} className="flex items-center gap-1 text-sm cursor-pointer">
-                <input type="radio" name="molStyle" value={s} checked={style === s}
+              <label key={s} className="flex items-center gap-1.5 text-sm cursor-pointer text-slate-300">
+                <input type="radio" name="molStyle" value={s} checked={style === s} className="accent-indigo-500"
                   onChange={() => { setStyle(s); trackInteraction?.("style_change", { style: s }); }} />
                 {s.replace(/-/g, " ")}
               </label>
             ))}
-
-            <label className="flex items-center gap-1 text-sm cursor-pointer ml-4">
-              <input type="checkbox" checked={showLabels} onChange={() => setShowLabels((v) => !v)} />
+            <label className="flex items-center gap-1.5 text-sm cursor-pointer ml-4 text-slate-300">
+              <input type="checkbox" checked={showLabels} onChange={() => setShowLabels((v) => !v)} className="accent-indigo-500" />
               Labels
             </label>
           </div>
@@ -232,9 +255,9 @@ export default function MolecularStructure() {
           {/* info card */}
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-4 text-xs text-center w-full max-w-lg">
             {[["Formula", mol.formula], ["Geometry", mol.geometry], ["Bond Angle", mol.bondAngle], ["Polarity", mol.polarity], ["Hybridization", mol.hybridization]].map(([label, val]) => (
-              <div key={label} className="bg-gray-100 rounded p-2">
-                <div className="font-semibold text-gray-500">{label}</div>
-                <div className="text-gray-800">{val}</div>
+              <div key={label} className="bg-slate-800 border border-slate-700 rounded-lg p-2">
+                <div className="font-semibold text-slate-400">{label}</div>
+                <div className="text-slate-100 font-medium">{val}</div>
               </div>
             ))}
           </div>
@@ -242,22 +265,22 @@ export default function MolecularStructure() {
 
         {/* ---- Questions panel ---- */}
         <div className="space-y-4">
-          <h3 className="font-semibold text-gray-700">Questions — {mol.formula}</h3>
+          <h3 className="font-semibold text-slate-200">Questions — {mol.formula}</h3>
 
           {mol.questions.map((q) => (
-            <div key={q.id} className={`p-3 rounded-lg border ${submitted ? (results[q.id] ? "border-green-400 bg-green-50" : "border-red-400 bg-red-50") : "border-gray-200 bg-white"}`}>
-              <p className="text-sm font-medium mb-2">{q.text}</p>
+            <div key={q.id} className={`p-3 rounded-xl border transition ${submitted ? (results[q.id] ? "border-emerald-600 bg-emerald-900/20" : "border-red-600 bg-red-900/20") : "border-slate-700 bg-slate-800/50"}`}>
+              <p className="text-sm font-medium mb-2 text-slate-200">{q.text}</p>
 
               {q.type === "numeric" ? (
                 <input type="number" value={answers[q.id] ?? ""} disabled={submitted}
                   onChange={(e) => handleAnswer(q.id, e.target.value)}
-                  className="w-full border rounded px-2 py-1 text-sm" placeholder={`Answer in ${q.unit || "units"}`} />
+                  className="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-1.5 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder={`Answer in ${q.unit || "units"}`} />
               ) : (
                 <div className="flex flex-wrap gap-2">
                   {q.options.map((opt) => (
                     <button key={opt} disabled={submitted}
                       onClick={() => handleAnswer(q.id, opt)}
-                      className={`px-3 py-1 rounded text-sm border transition ${answers[q.id] === opt ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-gray-700 border-gray-300 hover:border-indigo-400"}`}>
+                      className={`px-3 py-1 rounded-lg text-sm font-medium border transition ${answers[q.id] === opt ? "bg-indigo-600 text-white border-indigo-600 shadow-sm" : "bg-slate-900 text-slate-300 border-slate-600 hover:border-indigo-400"}`}>
                       {opt}
                     </button>
                   ))}
@@ -265,18 +288,18 @@ export default function MolecularStructure() {
               )}
 
               {submitted && !results[q.id] && (
-                <p className="text-xs text-red-600 mt-1">Correct: {q.correctAnswer}{q.unit ? ` ${q.unit}` : ""}</p>
+                <p className="text-xs text-red-400 mt-1.5 font-medium">Correct: {q.correctAnswer}{q.unit ? ` ${q.unit}` : ""}</p>
               )}
             </div>
           ))}
 
           <div className="flex gap-3">
             <button onClick={handleSubmit} disabled={submitted || Object.keys(answers).length < mol.questions.length}
-              className="flex-1 bg-indigo-600 text-white py-2 rounded-lg font-medium hover:bg-indigo-700 disabled:opacity-40 transition">
+              className="flex-1 bg-indigo-600 text-white py-2 rounded-xl font-semibold hover:bg-indigo-500 disabled:opacity-40 transition text-sm">
               Submit
             </button>
             <button onClick={resetQuiz}
-              className="flex-1 border border-gray-300 py-2 rounded-lg font-medium hover:bg-gray-50 transition">
+              className="flex-1 border border-slate-600 py-2 rounded-xl font-semibold hover:bg-slate-800 transition text-sm text-slate-300">
               Reset
             </button>
           </div>

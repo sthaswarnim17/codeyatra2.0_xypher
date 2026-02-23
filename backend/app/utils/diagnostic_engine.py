@@ -1,14 +1,13 @@
 ﻿"""
-Diagnostic engine -- evaluation logic for step-based problems.
+Diagnostic engine -- supporting utilities for step-based problems.
 
-Step-based flow:
-  - Student selects a StepOption by ID at each Step.
-  - If is_correct -> advance to next step, reveal explanation.
-  - If wrong -> return feedback, allow retry (with hint on 2nd attempt).
+Primary use: match error patterns for diagnostic analysis.
+All step evaluation (is_correct, explanation) is handled directly
+via StepOption.is_correct in the session routes.
 """
 
 import re
-from app.models import db, ErrorPattern, Checkpoint, StudentProgress, Concept
+from app.models import db, ErrorPattern, StudentProgress, Concept
 
 
 def _parse_numeric(val):
@@ -62,66 +61,22 @@ def match_error_pattern(checkpoint_id: int, student_answer: str) -> ErrorPattern
     matches.sort(key=lambda p: p.confidence, reverse=True)
     return matches[0]
 
-    # Guard: option must belong to this step
-    if option is None or option.step_id != step.id:
-        return {
-            "correct": False,
-            "feedback": "Invalid option selected. Please choose one of the options provided.",
-            "explanation": None,
-            "hint": None,
-            "next_action": "retry",
-        }
-
-    if option.is_correct:
-        return {
-            "correct": True,
-            "feedback": "Correct! Great work.",
-            "explanation": step.explanation,
-            "hint": None,
-            "next_action": "continue",
-        }
-
-    # Wrong answer
-    if attempt_number == 1:
-        feedback = "Not quite right. Review the step description and try again."
-        hint = step.step_description
-    else:
-        # Hint: reveal the correct answer text on 2nd+ attempt
-        feedback = f"Still incorrect. Hint: look for the option that matches -- {step.correct_answer[:80]}..."
-        hint = step.correct_answer
-
-    return {
-        "correct": False,
-        "feedback": feedback,
-        "explanation": None,
-        "hint": hint,
-        "next_action": "retry",
-    }
-
 
 # ---------------------------------------------------------------------------
-# Progress helpers (shared with sessions route)
+# Progress helpers
 # ---------------------------------------------------------------------------
 
-def evaluate_checkpoint_answer(
-    checkpoint: Checkpoint,
-    student_answer: str,
-    attempt_number: int,
-    student_id: int,
-) -> dict:
+def update_student_progress(student_id: int, concept_id: int) -> None:
     """
-    Evaluate a student's answer at a checkpoint and return the full response payload.
-    Accepts string-based answers for both numeric and MCQ checkpoints.
+    Upsert a StudentProgress row after a problem session ends.
+    Called by session routes after complete-mission or submit-answer (all correct).
     """
-    is_correct = _answers_match(student_answer, checkpoint.correct_answer, checkpoint.tolerance)
-
+    from datetime import datetime, timezone
+    now = datetime.now(timezone.utc)
     progress = StudentProgress.query.filter_by(
         student_id=student_id,
         concept_id=concept_id,
     ).first()
-
-    now = datetime.now(timezone.utc)
-
     if progress is None:
         progress = StudentProgress(
             student_id=student_id,
@@ -134,5 +89,6 @@ def evaluate_checkpoint_answer(
     else:
         progress.attempts = (progress.attempts or 0) + 1
         progress.last_attempted_at = now
-
+        if progress.status == "not_started":
+            progress.status = "in_progress"
     db.session.commit()

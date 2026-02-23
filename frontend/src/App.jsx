@@ -8,7 +8,6 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import AccountPage from "./pages/AccountPage";
-import DiagnosePage from "./pages/DiagnosePage";
 import PathfinderPage from "./pages/PathfinderPage";
 import ProgressPage from "./pages/ProgressPage";
 import SimulationsPage from "./pages/SimulationsPage";
@@ -39,14 +38,6 @@ export default function App() {
                       element={
                         <ProtectedRoute>
                           <QuestionsPage />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/diagnose"
-                      element={
-                        <ProtectedRoute>
-                          <DiagnosePage />
                         </ProtectedRoute>
                       }
                     />

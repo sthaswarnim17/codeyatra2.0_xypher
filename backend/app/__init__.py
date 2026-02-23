@@ -1,26 +1,22 @@
-﻿"""
+"""
 SikshyaMap AI - Flask Application Factory.
-
-Creates and configures the Flask application with all extensions,
-blueprints, and database setup.
 """
 
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from config import Config
-from config import config as config_map
+
 from app.models import db
+
 
 jwt = JWTManager()
 
-def create_app(cfg=Config):
-    """Application factory — creates and returns a fully configured Flask app."""
 
+def create_app(config_name=Config):
     app = Flask(__name__)
-    app.config.from_object(cfg)
+    app.config.from_object(config_name)
     app.url_map.strict_slashes = False
-
     db.init_app(app)
     jwt.init_app(app)
     CORS(app)
@@ -34,7 +30,6 @@ def create_app(cfg=Config):
     from app.routes.progress import progress_bp
     from app.routes.simulations import simulations_bp
     from app.routes.students import student_bp
-    from app.routes.simulations import simulations_bp
     from app.routes.sikshya import sikshya_bp
 
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
@@ -46,7 +41,6 @@ def create_app(cfg=Config):
     app.register_blueprint(progress_bp, url_prefix="/api/progress")
     app.register_blueprint(simulations_bp, url_prefix="/api/simulations")
     app.register_blueprint(student_bp, url_prefix="/api/students")
-    app.register_blueprint(simulations_bp, url_prefix="/api/simulations")
     app.register_blueprint(sikshya_bp, url_prefix="/api/sikshya")
 
     with app.app_context():
