@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 
 const CLASS_OPTIONS = [
@@ -13,16 +13,47 @@ const SUBJECT_OPTIONS = [
 ];
 
 export default function AccountPage() {
-  const { user, updateProfile, logout } = useAuth();
+  const { user, updateProfile, logout, authFetch } = useAuth();
   const [studentClass, setStudentClass] = useState(user?.class ?? "");
   const [subject, setSubject] = useState(user?.subject ?? "");
+  const [name, setName] = useState(user?.name ?? "");
+  const [email, setEmail] = useState(user?.email ?? "");
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  function handleSave(e) {
+  /* Fetch fresh profile from backend */
+  useEffect(() => {
+    authFetch("/api/students/about-me")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((json) => {
+        const s = json?.data?.student;
+        if (s) {
+          setName(s.name ?? user?.name ?? "");
+          setEmail(s.email ?? user?.email ?? "");
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  async function handleSave(e) {
     e.preventDefault();
-    updateProfile({ studentClass, subject });
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
+    setSaving(true);
+    try {
+      const res = await authFetch("/api/students/edit-me", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email }),
+      });
+      if (res.ok) {
+        updateProfile({ name, email, studentClass, subject });
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2500);
+      }
+    } catch {
+      /* silent */
+    } finally {
+      setSaving(false);
+    }
   }
 
   // Avatar initials
@@ -55,6 +86,32 @@ export default function AccountPage() {
         </h2>
 
         <form onSubmit={handleSave} className="flex flex-col gap-6">
+          {/* Name */}
+          <div>
+            <label className="block text-xs font-medium text-text-secondary mb-2">
+              Name
+            </label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full rounded-xl border-2 border-gray-300 bg-gray-100 px-4 py-3 text-sm font-semibold text-text-primary focus:border-amber-brand focus:outline-none transition-all"
+            />
+          </div>
+
+          {/* Email */}
+          <div>
+            <label className="block text-xs font-medium text-text-secondary mb-2">
+              Email
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full rounded-xl border-2 border-gray-300 bg-gray-100 px-4 py-3 text-sm font-semibold text-text-primary focus:border-amber-brand focus:outline-none transition-all"
+            />
+          </div>
+
           {/* Class */}
           <div>
             <label className="block text-xs font-medium text-text-secondary mb-2">
@@ -114,9 +171,10 @@ export default function AccountPage() {
 
           <button
             type="submit"
-            className="w-full rounded-xl bg-amber-brand hover:bg-amber-hover active:scale-95 py-2.5 font-semibold text-text-primary transition-all"
+            disabled={saving}
+            className="w-full rounded-xl bg-amber-brand hover:bg-amber-hover active:scale-95 py-2.5 font-semibold text-text-primary transition-all disabled:opacity-60"
           >
-            {saved ? "✓ Saved!" : "Save Changes"}
+            {saved ? "✓ Saved!" : saving ? "Saving…" : "Save Changes"}
           </button>
         </form>
       </div>
