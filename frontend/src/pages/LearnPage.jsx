@@ -5,7 +5,7 @@
  *
  * Layout:
  *  Left  — interactive simulation panel (if a simulation exists for this concept)
- *  Right — problem list → checkpoint-by-checkpoint solver
+ *  Right — problem list → step-by-step solver
  */
 
 import { useEffect, useState, useCallback } from "react";
@@ -42,10 +42,10 @@ export default function LearnPage() {
   const [error, setError] = useState(null);
 
   // Active session
-  const [session, setSession] = useState(null); // { session_id, checkpoints, problem }
-  const [cpIndex, setCpIndex] = useState(0);
-  const [answer, setAnswer] = useState("");
-  const [checkResult, setCheckResult] = useState(null); // { correct, feedback, backtrack, ... }
+  const [session, setSession] = useState(null); // { session_id, steps, problem }
+  const [stepIndex, setStepIndex] = useState(0);
+  const [selectedOptionId, setSelectedOptionId] = useState(null); // numeric option id
+  const [checkResult, setCheckResult] = useState(null); // { correct, feedback, explanation, ... }
   const [submitting, setSubmitting] = useState(false);
 
   // Load concept, problems, simulation
@@ -80,7 +80,7 @@ export default function LearnPage() {
   const startProblem = useCallback(async (problem) => {
     if (!user?.id) return;
     try {
-      // Fetch full problem (with all checkpoints) and start session in parallel
+      // Fetch full problem (with all steps) and start session in parallel
       const [probRes, sessRes] = await Promise.all([
         authFetch(`/api/problems/${problem.id}`),
         authFetch("/api/sessions/start", {
@@ -96,29 +96,29 @@ export default function LearnPage() {
 
       setSession({
         session_id: sessionData.session_id,
-        checkpoints: fullProblem.checkpoints ?? [],
+        steps: fullProblem.steps ?? [],
         problem,
         completed: false,
       });
-      setCpIndex(0);
-      setAnswer("");
+      setStepIndex(0);
+      setSelectedOptionId(null);
       setCheckResult(null);
     } catch (e) {
       alert(e.message);
     }
   }, [authFetch, user?.id]);
 
-  // Submit answer for current checkpoint
-  const submitCheckpoint = async () => {
-    if (!answer || !session) return;
+  // Submit answer for current step
+  const submitStep = async () => {
+    if (selectedOptionId === null || !session) return;
     setSubmitting(true);
-    const cp = session.checkpoints[cpIndex];
+    const step = session.steps[stepIndex];
     try {
       const res = await authFetch(`/api/sessions/${session.session_id}/submit`, {
         method: "POST",
         body: JSON.stringify({
-          checkpoint_id: cp.id,
-          selected_value: answer,
+          step_id: step.id,
+          selected_option_id: selectedOptionId,
         }),
       });
       const data = await res.json();
@@ -131,22 +131,22 @@ export default function LearnPage() {
     }
   };
 
-  const nextCheckpoint = () => {
-    const nextIdx = cpIndex + 1;
-    if (nextIdx >= session.checkpoints.length) {
+  const nextStep = () => {
+    const nextIdx = stepIndex + 1;
+    if (nextIdx >= session.steps.length) {
       setSession((s) => ({ ...s, completed: true }));
     } else {
-      setCpIndex(nextIdx);
-      setAnswer("");
+      setStepIndex(nextIdx);
+      setSelectedOptionId(null);
       setCheckResult(null);
     }
   };
 
   const closeSession = () => {
     setSession(null);
-    setAnswer("");
+    setSelectedOptionId(null);
     setCheckResult(null);
-    setCpIndex(0);
+    setStepIndex(0);
   };
 
   // ─── render helpers ─────────────────────────────────────────────
@@ -175,7 +175,7 @@ export default function LearnPage() {
   }
 
   const SimComp = simulation ? SIM_COMPONENT[simulation.simulation_type] : null;
-  const activeCp = session?.checkpoints?.[cpIndex];
+  const activeStep = session?.steps?.[stepIndex];
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-8 gap-6 flex flex-col">
@@ -233,8 +233,8 @@ export default function LearnPage() {
                   <p className="font-bold text-text-primary text-sm">{session.problem.title}</p>
                   <p className="text-xs text-text-muted mt-0.5">
                     {session.completed
-                      ? "All checkpoints completed!"
-                      : `Checkpoint ${cpIndex + 1} of ${session.checkpoints.length}`}
+                      ? "All steps completed!"
+                      : `Step ${stepIndex + 1} of ${session.steps.length}`}
                   </p>
                 </div>
                 <button onClick={closeSession}
@@ -253,7 +253,7 @@ export default function LearnPage() {
                   </div>
                   <h3 className="text-xl font-extrabold text-text-primary mb-2">Problem Complete!</h3>
                   <p className="text-text-secondary text-sm mb-6">
-                    You finished all checkpoints for this problem.
+                    You finished all steps for this problem.
                   </p>
                   <div className="flex gap-3 justify-center">
                     <button onClick={closeSession}
@@ -267,64 +267,54 @@ export default function LearnPage() {
                   </div>
                 </div>
               ) : (
-                /* Active checkpoint */
+                /* Active step */
                 <div className="p-5">
                   {/* Progress bar */}
                   <div className="flex gap-1 mb-6">
-                    {session.checkpoints.map((_, i) => (
+                    {session.steps.map((_, i) => (
                       <div key={i} className={`h-1.5 flex-1 rounded-full transition-all ${
-                        i < cpIndex ? "bg-emerald-400" : i === cpIndex ? "bg-amber-brand" : "bg-gray-200"
+                        i < stepIndex ? "bg-emerald-400" : i === stepIndex ? "bg-amber-brand" : "bg-gray-200"
                       }`} />
                     ))}
                   </div>
 
-                  {/* Instruction */}
-                  {activeCp?.instruction && (
+                  {/* Step description */}
+                  {activeStep?.step_description && (
                     <div className="rounded-xl bg-cream-100 border border-cream-300 px-4 py-3 text-sm text-text-secondary mb-4">
-                      {activeCp.instruction}
+                      {activeStep.step_description}
                     </div>
                   )}
 
-                  {/* Question */}
+                  {/* Step title */}
                   <h3 className="text-base font-bold text-text-primary leading-snug mb-5">
-                    {activeCp?.question}
+                    {activeStep?.step_title}
                   </h3>
 
-                  {/* Choices or text input */}
-                  {activeCp?.choices?.length > 0 ? (
+                  {/* Options */}
+                  {activeStep?.options?.length > 0 ? (
                     <div className="flex flex-col gap-2.5 mb-5">
-                      {activeCp.choices.map((ch) => (
+                      {activeStep.options.map((opt) => (
                         <button
-                          key={ch.id}
-                          onClick={() => { setAnswer(String(ch.value)); setCheckResult(null); }}
+                          key={opt.id}
+                          onClick={() => { setSelectedOptionId(opt.id); setCheckResult(null); }}
+                          disabled={checkResult?.correct}
                           className={`rounded-xl border-2 px-4 py-3.5 text-sm text-left transition-all flex items-center gap-3 ${
-                            answer === String(ch.value)
+                            selectedOptionId === opt.id
                               ? "border-amber-brand bg-amber-brand/10"
                               : "border-gray-200 bg-white hover:border-gray-300"
                           }`}
                         >
-                          <div className={`w-4.5 h-4.5 rounded-full border-2 flex-shrink-0 transition-all ${
-                            answer === String(ch.value) ? "border-amber-brand bg-amber-brand" : "border-gray-300"
+                          <div className={`w-4 h-4 rounded-full border-2 flex-shrink-0 transition-all ${
+                            selectedOptionId === opt.id ? "border-amber-brand bg-amber-brand" : "border-gray-300"
                           }`} />
-                          <span className={answer === String(ch.value) ? "text-text-primary font-medium" : "text-text-secondary"}>
-                            {ch.label}
+                          <span className={selectedOptionId === opt.id ? "text-text-primary font-medium" : "text-text-secondary"}>
+                            {opt.option_text}
                           </span>
                         </button>
                       ))}
                     </div>
                   ) : (
-                    <div className="mb-5">
-                      <label className="block text-xs font-semibold text-text-secondary uppercase tracking-widest mb-2">
-                        Your Answer{activeCp?.unit ? ` (${activeCp.unit})` : ""}
-                      </label>
-                      <input
-                        type="text"
-                        value={answer}
-                        onChange={(e) => { setAnswer(e.target.value); setCheckResult(null); }}
-                        placeholder="Enter your answer…"
-                        className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-text-primary placeholder-gray-400 focus:border-amber-brand focus:outline-none focus:ring-2 focus:ring-amber-brand/20 transition"
-                      />
-                    </div>
+                    <p className="text-sm text-text-muted mb-5">No options available.</p>
                   )}
 
                   {/* Feedback banner */}
@@ -349,18 +339,14 @@ export default function LearnPage() {
                         {checkResult.feedback && (
                           <p className="text-xs mt-0.5 opacity-80">{checkResult.feedback}</p>
                         )}
-                        {checkResult.backtrack && checkResult.backtrack_path && (
-                          <div className="mt-2">
-                            <p className="text-xs font-semibold mb-1">Review prerequisite first:</p>
-                            <div className="flex flex-wrap gap-1">
-                              {checkResult.backtrack_path.map((node) => (
-                                <span key={node.concept.id}
-                                  className="text-[11px] bg-amber-100 text-amber-700 border border-amber-200 rounded-full px-2.5 py-0.5 font-medium">
-                                  {node.concept.name}
-                                </span>
-                              ))}
-                            </div>
+                        {checkResult.correct && checkResult.explanation && (
+                          <div className="mt-2 text-xs bg-white/50 rounded-lg px-3 py-2 border border-emerald-200">
+                            <p className="font-semibold mb-0.5">Explanation:</p>
+                            <p className="opacity-90">{checkResult.explanation}</p>
                           </div>
+                        )}
+                        {checkResult.hint && !checkResult.correct && (
+                          <p className="text-xs mt-2 italic opacity-80">Hint: {checkResult.hint}</p>
                         )}
                       </div>
                     </div>
@@ -368,14 +354,14 @@ export default function LearnPage() {
 
                   {/* Action button */}
                   {checkResult?.correct ? (
-                    <button onClick={nextCheckpoint}
+                    <button onClick={nextStep}
                       className="w-full rounded-xl bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-bold text-sm py-3 transition-all">
-                      {cpIndex < session.checkpoints.length - 1 ? "Next Checkpoint →" : "Finish Problem ✓"}
+                      {stepIndex < session.steps.length - 1 ? "Next Step →" : "Finish Problem ✓"}
                     </button>
                   ) : (
                     <button
-                      onClick={submitCheckpoint}
-                      disabled={!answer || submitting}
+                      onClick={submitStep}
+                      disabled={selectedOptionId === null || submitting}
                       className="w-full rounded-xl bg-amber-brand hover:bg-amber-hover disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 text-white font-bold text-sm py-3 transition-all"
                     >
                       {submitting ? (
@@ -422,10 +408,13 @@ export default function LearnPage() {
                           }`}>
                             {DIFFICULTY_LABEL[prob.difficulty] ?? "Explorer"}
                           </span>
-                          {prob.checkpoint_count > 0 && (
+                          {(prob.step_count > 0) && (
                             <span className="text-[11px] text-text-muted">
-                              {prob.checkpoint_count} step{prob.checkpoint_count !== 1 ? "s" : ""}
+                              {prob.step_count} step{prob.step_count !== 1 ? "s" : ""}
                             </span>
+                          )}
+                          {prob.subject && (
+                            <span className="text-[11px] text-indigo-500 font-medium">{prob.subject}</span>
                           )}
                         </div>
                       </div>
